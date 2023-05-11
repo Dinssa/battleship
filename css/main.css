@@ -98,7 +98,7 @@ footer {
 #score-board-inner > div > img {
     width: 5vmin;
     border-radius: 50%;
-    border:0.4vmin solid var(--persian-green);
+    border:0.4vmin solid var(--light-cyan);
 }
 
 #score-board-left, #score-board-right{
@@ -167,6 +167,51 @@ footer {
     cursor: pointer;
 }
 
+#hiden{
+    display: none;
+}
+
+#hiden-inplace{
+    visibility: none;
+}
+
+#board-one-outer, #board-two-outer{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#board-one-inner, #board-two-inner{
+    display: grid;
+    grid-template-rows: repeat(10, 1fr);
+    width: 30vmin;
+    height: 30vmin;
+}
+
+#board-one-menu{
+    background-color: #b5f5f8;
+    width: 30vmin;
+    height: 15vmin;
+}
+
+#board-two-menu{
+    background-color: #b5f5f8;
+    width: 30vmin;
+    height: 6vmin;
+    margin-bottom: 9vmin;
+}
+
+.row{
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+}
+
+.cell{
+    background-color: white;
+    border: 0.2vmin solid var(--light-cyan);
+}
+
 @media screen and (max-width: 800px) {
     body{
         font-size: 12px;
@@ -174,7 +219,7 @@ footer {
     #game-board{
         grid-template-columns: 100%;
     }
-    #game-board > .hide{
+    #game-board > .mobile-hide{
         display: none;
     }
 
