@@ -11,7 +11,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Foldit:wght@500;600&family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Darumadrop+One&family=Foldit:wght@500;600&family=Montserrat:wght@400;600&family=Roboto:wght@300&display=swap" rel="stylesheet">
 
     <script defer src="js/main.js"></script>
 </head>
@@ -20,11 +20,22 @@
         <p>Battleship</p>
     </header>
     <main>
-        <section id="score-board">
-            Score Board
+        <section id="score-board-outer">
+            <div id="score-board-inner">
+                <div id="score-board-left">
+                    <div>You</div>
+                    <img src="assets/profile/human-player.jpg">
+                    <div>00:00</div>
+                </div>
+                <div id="score-board-middle"><span>0</span> <span>:</span> <span>0</span></div>
+                <div id="score-board-right">
+                    <img src="assets/profile/ai-sailor.jpg">
+                    <div>Computer</div>
+                </div>
+            </div>
         </section>
         <section id="message">
-            Message
+            <p>Message</p>
         </section>
         <section id="game-board">
             <div id="game-options">
@@ -34,7 +45,6 @@
                 <!-- <span class="material-symbols-outlined">volume_off</span> -->
                 <span class="material-symbols-outlined">music_note</span>
                 <!-- <span class="material-symbols-outlined">music_off</span> -->
-
             </div>
             <div id="player1-board" class="hide">
 
@@ -44,7 +54,7 @@
             </div>
         </section>
         <section id="controls">
-            <button>Button</button>
+            <button>Play</button>
         </section>
     </main>
 

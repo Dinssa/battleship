@@ -1,5 +1,5 @@
 :root {
-    --charcoal: #153c4c;
+    --charcoal: 38, 70, 83;
     --persian-green: #2A9D8F;
     --light-cyan: #E0FBFC;
     --burnt-sienna: #EE6C4D;
@@ -16,22 +16,22 @@
 
 * {
     box-sizing: border-box;
-
 }
 
 body {
     height: 100vh;
     margin: 0;
-    background-color: var(--charcoal);
+    background-color: rgba(var(--charcoal), 1);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     font-size: 16px;
+    font-family: 'Montserrat', sans-serif;
 }
 
 header {
-    height: 10vmin;
+    height: 8vmin;
     width: 80vmin;
     /* position: fixed;
     top: 0px; */
@@ -43,7 +43,7 @@ header {
 header > p {
     font-size: 5vmin;
     color: white;
-    /* font-family: 'Foldit', cursive; */
+    font-family: 'Foldit', cursive;
 }
 
 main {
@@ -59,7 +59,6 @@ footer {
     background-color: black;
     color: white;
     text-align: center;
-    vertical-align: middle;
 }
 
 #game-options{
@@ -78,16 +77,72 @@ footer {
     color: white;
     padding-top: 0.5vmin;
     padding-bottom: 0.5vmin;
+    cursor: pointer;
 }
 
-#score-board{
+#score-board-outer{
     height: 10%;
-    background-color: lightgray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#score-board-inner {
+    background-color: var(--persian-green);
+    padding: 0.3vmin 3vmin;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    color: white;
+}
+
+#score-board-inner > div > img {
+    width: 5vmin;
+    border-radius: 50%;
+    border:0.4vmin solid var(--persian-green);
+}
+
+#score-board-left, #score-board-right{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    justify-content: center;
+    text-align: center;
+}
+
+#score-board-left > img, #score-board-right > img {
+    grid-row: span 2;
+    justify-self: center;
+    align-self: center;
+}
+
+#score-board-left > div:first-child, #score-board-right > div {
+    align-self: flex-end;
+}
+
+#score-board-middle{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4vmin;
+    font-family: 'Darumadrop One', cursive;
+}
+
+#score-board-middle > span {
+    padding: 0 0.5vmin;
 }
 
 #message{
     height: 5%;
-    background-color: grey;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#message > p{
+    text-align: center;
+    color: white;
+    font-size: 1.7vmin;
+    text-transform: uppercase;
 }
 
 #game-board{
@@ -102,6 +157,14 @@ footer {
 #controls{
     height: 10%;
     background-color: #EE6C4D;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#controls > button {
+    padding: 1vmin 2vmin;
+    cursor: pointer;
 }
 
 @media screen and (max-width: 800px) {
