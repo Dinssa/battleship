@@ -1,0 +1,130 @@
+:root {
+    --charcoal: #153c4c;
+    --persian-green: #2A9D8F;
+    --light-cyan: #E0FBFC;
+    --burnt-sienna: #EE6C4D;
+    --giants-orange: #F05D23;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 48
+}
+
+* {
+    box-sizing: border-box;
+
+}
+
+body {
+    height: 100vh;
+    margin: 0;
+    background-color: var(--charcoal);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+}
+
+header {
+    height: 10vmin;
+    width: 80vmin;
+    /* position: fixed;
+    top: 0px; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+header > p {
+    font-size: 5vmin;
+    color: white;
+    /* font-family: 'Foldit', cursive; */
+}
+
+main {
+    height: 75vmin;
+    width: 80vmin;
+}
+
+footer {
+    height: 5%;
+    width: 100%;
+    position: fixed;
+    bottom: 0px;
+    background-color: black;
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+}
+
+#game-options{
+    background-color: black;
+    position: absolute;
+    top: 5vmin;
+    left: -5vmin;
+    width: 5vmin;
+    height: 20.5vmin;
+}
+
+#game-options > span{
+    display: block;
+    font-size: 4vmin;
+    text-align: center;
+    color: white;
+    padding-top: 0.5vmin;
+    padding-bottom: 0.5vmin;
+}
+
+#score-board{
+    height: 10%;
+    background-color: lightgray;
+}
+
+#message{
+    height: 5%;
+    background-color: grey;
+}
+
+#game-board{
+    height: 75%;
+    background-color: var(--light-cyan);
+    position: relative;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 100%;
+}
+
+#controls{
+    height: 10%;
+    background-color: #EE6C4D;
+}
+
+@media screen and (max-width: 800px) {
+    body{
+        font-size: 12px;
+    }
+    #game-board{
+        grid-template-columns: 100%;
+    }
+    #game-board > .hide{
+        display: none;
+    }
+
+    #game-options{
+        top: 5vmin;
+        left: -9vmin;
+        width: 9vmin;
+        height: 33vmin;
+    }
+    
+    #game-options > span{
+        font-size: 6vmin;
+        padding-top: 1vmin;
+        padding-bottom: 1vmin;
+    }
+  }
