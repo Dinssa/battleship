@@ -29,6 +29,9 @@ const SHIPS = {
 
 /*----- state variables -----*/
 let game;
+let games = [];
+let gameNum = 0;
+let scores = {};
   
 /*----- cached elements  -----*/
 const boardOneEl = document.getElementById('board-one-inner');
@@ -71,6 +74,7 @@ class Board {
         this.cellEls = [];
         this.ships = ships;
         this.currentShip = null;
+        this.currentShipMousePosition = null;
     }
 
     init(){
@@ -87,7 +91,7 @@ class Board {
                 const cell = new Cell(document.createElement('div'));
                 this.cellEls.push(cell);
                 cell.domElement.classList.add('cell');
-                cell.domElement.dataset.xy = `${i}-${j}`;
+                cell.domElement.dataset.xy = `${j}-${i}`;
                 row.append(cell.domElement);
             }
             this.boardElement.append(row);
@@ -120,45 +124,79 @@ class HumanBoard extends Board {
         this.boardElement.addEventListener('dragover', this.handleDragOver.bind(this));
         this.boardElement.addEventListener('dragleave', this.handleDragLeave.bind(this));
         this.boardElement.addEventListener('drop', this.handleDragDrop.bind(this));
+        this.cellsToHighlight = [];
     }
     
-    highlightCells(cell, shipLength, orientation){
-        console.log(cell);
-        console.log(this.ships)
+    highlightCells(cell){
+        // cell.classList.add('hover');
+        let ship = games[gameNum].playerOne.board.ships.find(ship => ship.name === games[gameNum].playerOne.board.currentShip);
+        console.log(ship)
+        let shipMousePosition = games[gameNum].playerOne.board.currentShipMousePosition;
+        // console.log(shipMousePosition);
+        let cellPosition = cell.dataset.xy.split('-');
+        // console.log(cellPosition)
+        let cellX = parseInt(cellPosition[0]);
+        let cellY = parseInt(cellPosition[1]);
+        this.cellsToHighlight = [cell.dataset.xy];
+        if (ship.orientation === 'vertical'){
+            for (let i = ship.length - shipMousePosition; i > 0; i--){
+                if (cellY + i > 9) return; // Guard: if ship is too long to fit on board
+                this.cellsToHighlight.push(`${cellX}-${cellY + i}`)
+            }
+            for (let i = shipMousePosition - 1; i > 0; i--){
+                if (cellY - i < 0) return; // Guard: if ship is too long to fit on board
+                this.cellsToHighlight.push(`${cellX}-${cellY - i}`)
+            }
+            console.log(this.cellsToHighlight)
+        } else {
+
+        }
+
+        this.cellsToHighlight.forEach(xy => document.querySelector(`[data-xy="${xy}"]`).classList.add('hover'))
+        // console.log(shipLength);
+        // console.log(shipOrientation);
+        // console.log(SHIPS[games[gameNum].playerOne.board.currentShip].length)
+        // console.log(cell.dataset.xy)
+    }
+
+    unHighlightCells(cell){
+        let boardCellEls = document.querySelectorAll('#board-one-inner > .row > .cell');
+        boardCellEls.forEach(cell => (!this.cellsToHighlight.includes(cell.dataset.xy)) ? cell.classList.remove('hover') : null);
+        console.log(boardCellEls);
+    }
+
+    placeShip(cell, shipLength, orientation){
+
     }
 
     handleDragEnter(evt){
         evt.preventDefault();
         const cell = evt.target;
-        // const shipName = evt.dataTransfer.getData('text/plain');
-        // console.log(shipName);
-        // this.highlightCells(cell, SHIPS[shipName].length, orientation);
-        console.log('handle drag enter')
-        console.log(this.currentShip);
-        cell.classList.add('hover');
+        // console.log('handle drag enter')
+        this.highlightCells(cell);
     }
 
     handleDragOver(evt){
         evt.preventDefault();
-        const cell = evt.target;
+        // const cell = evt.target;
         // console.log('handle drag over')
-        // console.log(this.currentShip);
-        cell.classList.add('hover');
+        // cell.classList.add('hover');
     }
 
     handleDragLeave(evt){
         evt.preventDefault();
+        // console.log('handle drag leave')
         const cell = evt.target;
-        cell.classList.remove('hover');
+        this.unHighlightCells(cell);
     }
 
     handleDragDrop(evt){
         evt.preventDefault();
+        // console.log('handle drag drop')
         const cell = evt.target;
-        cell.classList.remove('hover');
+        this.placeShip(cell);
         // const shipName = evt.dataTransfer.getData('text/plain');
         // console.log(shipName);
-        const cellIdx = cell.dataset.xy.split('-');
         console.log(cell.dataset.xy)
     }
 
@@ -185,6 +223,7 @@ class Ship {
         this.color = SHIPS[name].color;
         this.img = SHIPS[name].img;
         this.orientation = 'vertical';
+        this.mousePosition = null;
         this.startPos = null;
     }
 
@@ -196,37 +235,54 @@ class Ship {
         shipEl.draggable = true;
         shipEl.dataset.name = this.name;
         shipEl.dataset.length = this.length;
-        shipEl.addEventListener('keydown', this.handleKeyDown.bind(this));
+        // shipEl.addEventListener('keydown', this.handleKeyDown.bind(this));
         shipEl.addEventListener('mousedown', this.handleMouseDown.bind(this));
         shipEl.addEventListener('dragstart', this.handleDragStart.bind(this));
         shipEl.addEventListener('dragend', this.handleDragEnd.bind(this));
         boardOneMenuEl.appendChild(shipEl)
     }
 
-    handleKeyDown(evt){
-        console.log('key down')
-        console.log(evt.target.keyCode)
+    mousePositionOnShip(evt){
+        console.log('mouse position on ship')
+        let bound = evt.target.getBoundingClientRect();
+        let mouseY = evt.clientY - bound.top
+        let mouseX = evt.clientX - bound.left
+        let height = bound.height;
+        let shipLength = SHIPS[games[gameNum].playerOne.board.currentShip].length;
+        // height = window.getComputedStyle(evt.target).getPropertyValue('height');
+        let positionY = Math.ceil(mouseY/height * shipLength);
+        let positionX = Math.ceil(mouseX/height * shipLength);
+
+        if (this.orientation === 'vertical'){
+            return positionY;
+        } else {
+            return positionX;
+        }
     }
+
+    // handleKeyDown(evt){
+    //     console.log('key down')
+    //     console.log(evt.target.keyCode)
+    // }
 
     handleMouseDown(evt){
         console.log('mouse down')
-        game.playerOne.board.currentShip = evt.target.dataset.name;
-        // this.board.currentShip = evt.target.dataset.name;
-        console.log(game.playerOne.board)
-        console.log(this.board)
-        console.log(this.Player)
+        games[gameNum].playerOne.board.currentShip = evt.target.dataset.name;
+        games[gameNum].playerOne.board.currentShipMousePosition = this.mousePositionOnShip(evt);
+        // console.log(this.mousePositionOnShip(evt))
     }
 
     handleDragStart(evt){
         const shipEl = evt.target;
-        // evt.dataTransfer.setData('text/plain', shipEl.dataset.name);
         shipEl.style.opacity = '0.4';
         shipEl.style.boxShadow = '0 0 0.5vmin black';
     }
 
     handleDragEnd(evt){
         const shipEl = evt.target;
-        // evt.dataTransfer.setData('text/plain', shipEl.dataset.name);
+        console.log('drag end')
+        console.log(shipEl.dataset.name)
+        evt.dataTransfer.setData('text/plain', shipEl.dataset.name);
         shipEl.style.opacity = '1';
         shipEl.style.boxShadow = '';
     }
@@ -338,7 +394,6 @@ class BattleShipGame {
         this.playerOne.board.init();
         this.playerTwo.board.init();
         this.playerOne.placeShips();
-
     }
 
     render(){
@@ -366,5 +421,6 @@ class BattleShipGame {
 
 function init(){
     game = new BattleShipGame(10);
-    game.play();
+    games.push(game);
+    games[gameNum].play();
 }
