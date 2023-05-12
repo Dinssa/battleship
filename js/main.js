@@ -1,10 +1,38 @@
 /*----- constants -----*/
+const SHIPS = {
+    'carrier': {
+        'length': 5,
+        'color': '66, 12, 20',
+        'img': ''
+        },
+    'battleship': {
+        'length': 4,
+        'color': '23, 163, 152',
+        'img': ''
+    },
+    'cruiser': {
+        'length': 3,
+        'color': '161, 134, 158',
+        'img': ''
+    },
+    'submarine': {
+        'length': 3,
+        'color': '238, 202, 129',
+        'img': ''
+    },
+    'destroyer': {
+        'length': 2,
+        'color': '139, 158, 46',
+        'img': ''
+    }
+}
 
 /*----- state variables -----*/
 let game;
   
 /*----- cached elements  -----*/
 const boardOneEl = document.getElementById('board-one-inner');
+const boardOneMenuEl = document.getElementById('board-one-menu');
 const boardTwoEl = document.getElementById('board-two-inner');
 const msgEl = document.querySelector('#message>p');
 const playBtn = document.querySelector('#controls>button');
@@ -37,20 +65,27 @@ class Cell {
 // }
 
 class Board {
-    constructor(boardSize, boardElement){
+    constructor(boardSize, boardElement, ships){
         this.size = boardSize;
         this.boardElement = boardElement;
-        this.cells = [];
+        this.cellEls = [];
+        this.ships = ships;
+        this.currentShip = null;
     }
 
     init(){
+        this.initBoard();
+        this.initShips();
+    }
+
+    initBoard(){
         this.boardElement.innerHTML = '';
         for(let i = 0; i < this.size; i++){
             const row = document.createElement('div');
             row.classList.add('row');
             for(let j = 0; j < this.size; j++){
                 const cell = new Cell(document.createElement('div'));
-                this.cells.push(cell);
+                this.cellEls.push(cell);
                 cell.domElement.classList.add('cell');
                 cell.domElement.dataset.xy = `${i}-${j}`;
                 row.append(cell.domElement);
@@ -59,33 +94,171 @@ class Board {
         }
     }
 
+    initShips(){
+        boardOneMenuEl.innerHTML = '';
+        this.ships.forEach(ship => ship.render());
+    }
+
+    // handleAttack(evt){
+    //     const cell = evt.target;
+    //     const idx = cell.dataset.xy;
+    //     console.log(idx);
+    //     console.log(this.cellEls)
+    //     if (idx === undefined) return;
+    // }
+
     render(){
-        this.cells.forEach(cell => cell.render());
+        this.cellEls.forEach(cell => cell.render());
     }
 }
 
-class HumanBoard extends Board {   
+class HumanBoard extends Board {
+    constructor(boardSize, boardElement, ships){
+        super(boardSize, boardElement, ships);
+        // console.log(this)
+        this.boardElement.addEventListener('dragenter', this.handleDragEnter.bind(this));
+        this.boardElement.addEventListener('dragover', this.handleDragOver.bind(this));
+        this.boardElement.addEventListener('dragleave', this.handleDragLeave.bind(this));
+        this.boardElement.addEventListener('drop', this.handleDragDrop.bind(this));
+    }
+    
+    highlightCells(cell, shipLength, orientation){
+        console.log(cell);
+        console.log(this.ships)
+    }
 
+    handleDragEnter(evt){
+        evt.preventDefault();
+        const cell = evt.target;
+        // const shipName = evt.dataTransfer.getData('text/plain');
+        // console.log(shipName);
+        // this.highlightCells(cell, SHIPS[shipName].length, orientation);
+        console.log('handle drag enter')
+        console.log(this.currentShip);
+        cell.classList.add('hover');
+    }
+
+    handleDragOver(evt){
+        evt.preventDefault();
+        const cell = evt.target;
+        // console.log('handle drag over')
+        // console.log(this.currentShip);
+        cell.classList.add('hover');
+    }
+
+    handleDragLeave(evt){
+        evt.preventDefault();
+        const cell = evt.target;
+        cell.classList.remove('hover');
+    }
+
+    handleDragDrop(evt){
+        evt.preventDefault();
+        const cell = evt.target;
+        cell.classList.remove('hover');
+        // const shipName = evt.dataTransfer.getData('text/plain');
+        // console.log(shipName);
+        const cellIdx = cell.dataset.xy.split('-');
+        console.log(cell.dataset.xy)
+    }
 
 }
 
 class ComputerBoard extends Board {
+    constructor(boardSize, boardElement, ships){
+        super(boardSize, boardElement, ships);
+        // this.boardElement.addEventListener('click', this.handleAttack.bind(this));
+    }
 
     render(){
-        this.cells.forEach(cell => {if (cell.value !== "ship") cell.render()});
+        this.cellEls.forEach(cell => {if (cell.value !== "ship") cell.render()});
     }
 
 }
 
-class Ship {   
+class Ship {
+    constructor(name){
+        this.name = name;
+        // this.board = board;
+        // console.log(this.board)
+        this.length = SHIPS[name].length;
+        this.color = SHIPS[name].color;
+        this.img = SHIPS[name].img;
+        this.orientation = 'vertical';
+        this.startPos = null;
+    }
+
+    render(){
+        const shipEl = document.createElement('div');
+        shipEl.style.height = `${this.length * 3}vmin`;
+        shipEl.style.width = '3vmin';
+        shipEl.style.backgroundColor = `rgb(${this.color})`;
+        shipEl.draggable = true;
+        shipEl.dataset.name = this.name;
+        shipEl.dataset.length = this.length;
+        shipEl.addEventListener('keydown', this.handleKeyDown.bind(this));
+        shipEl.addEventListener('mousedown', this.handleMouseDown.bind(this));
+        shipEl.addEventListener('dragstart', this.handleDragStart.bind(this));
+        shipEl.addEventListener('dragend', this.handleDragEnd.bind(this));
+        boardOneMenuEl.appendChild(shipEl)
+    }
+
+    handleKeyDown(evt){
+        console.log('key down')
+        console.log(evt.target.keyCode)
+    }
+
+    handleMouseDown(evt){
+        console.log('mouse down')
+        game.playerOne.board.currentShip = evt.target.dataset.name;
+        // this.board.currentShip = evt.target.dataset.name;
+        console.log(game.playerOne.board)
+        console.log(this.board)
+        console.log(this.Player)
+    }
+
+    handleDragStart(evt){
+        const shipEl = evt.target;
+        // evt.dataTransfer.setData('text/plain', shipEl.dataset.name);
+        shipEl.style.opacity = '0.4';
+        shipEl.style.boxShadow = '0 0 0.5vmin black';
+    }
+
+    handleDragEnd(evt){
+        const shipEl = evt.target;
+        // evt.dataTransfer.setData('text/plain', shipEl.dataset.name);
+        shipEl.style.opacity = '1';
+        shipEl.style.boxShadow = '';
+    }
+}
+
+class HumanShip extends Ship {
+    constructor(name){
+        super(name);
+    }
+
+    render(){
+        const shipEl = document.createElement('div');
+        shipEl.style.height = `${this.length * 3}vmin`;
+        shipEl.style.width = '3vmin';
+        shipEl.style.backgroundColor = `rgb(${this.color})`;
+        shipEl.draggable = true;
+        shipEl.dataset.name = this.name;
+        shipEl.dataset.length = this.length;
+        shipEl.addEventListener('keydown', this.handleKeyDown.bind(this));
+        shipEl.addEventListener('mousedown', HumanPlayer.handleMouseDownShip.bind(this));
+        shipEl.addEventListener('dragstart', this.handleDragStart.bind(this));
+        shipEl.addEventListener('dragend', this.handleDragEnd.bind(this));
+        boardOneMenuEl.appendChild(shipEl)
+    }
 
 }
 
+
 class Player {
-    constructor(name, boardElement){
+    constructor(name, board){
         this.name = name;
-        this.ships = [];
-        this.board = new Board(10, boardElement);
+        this.board = board;
         this.hits = [];
         this.misses = [];
     }
@@ -99,10 +272,31 @@ class Player {
     }
 }
 
+class HumanPlayer extends Player {
+    constructor(name, board){
+        super(name, board);
+        this.currentShip = null;
+    }
+
+    handleMouseDownShip(evt){
+        console.log('mouse down on ship')
+        
+    
+    }
+
+    attack(){
+
+    }
+
+    placeShips(){
+        
+    }
+}
+
 class ComputerPlayer extends Player {
-    constructor(name, boardElement){
-        super(name, boardElement);
-        this.board = new ComputerBoard(10, boardElement);
+    constructor(name, board){
+        super(name, board);
+        //
     }
 
     attack(){
@@ -123,20 +317,28 @@ class BattleShipGame {
         this.boardSize = boardSize;
         this.music = true;
         this.soundEffects = true;
+        // this.scores = {};
     }
 
     play() {
         this.turn = 1;
         this.winner = null;
-        this.playerOne = new Player('You', boardOneEl);
-        this.playerTwo = new ComputerPlayer('Computer', boardTwoEl);
+        this.ships = ['carrier', 'battleship', 'cruiser', 'submarine', 'destroyer'];
+        const playerOneShips = this.ships.map(ship => new Ship(ship));
+        const playerTwoShips = this.ships.map(ship => new Ship(ship));
+        const playerOneBoard = new HumanBoard(this.boardSize, boardOneEl, playerOneShips);
+        const playerTwoBoard = new ComputerBoard(this.boardSize, boardTwoEl, playerTwoShips);
+        this.playerOne = new HumanPlayer('You', playerOneBoard);
+        this.playerTwo = new ComputerPlayer('Computer', playerTwoBoard);
         this.renderInit();
         this.render();
     }
 
     renderInit(){
         this.playerOne.board.init();
-        this.playerTwo.board.init();   
+        this.playerTwo.board.init();
+        this.playerOne.placeShips();
+
     }
 
     render(){
@@ -150,6 +352,10 @@ class BattleShipGame {
     }
 
     renderScoreBoard(){
+
+    }
+
+    renderControls(){
 
     }
 

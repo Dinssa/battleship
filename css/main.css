@@ -1,9 +1,9 @@
 :root {
     --charcoal: 38, 70, 83;
-    --persian-green: #2A9D8F;
-    --light-cyan: #E0FBFC;
-    --burnt-sienna: #EE6C4D;
-    --giants-orange: #F05D23;
+    --persian-green: 42, 157, 143;
+    --light-cyan: 224, 251, 252;
+    --burnt-sienna: 238, 108, 77;
+    --giants-orange: 240, 93, 35;
 }
 
 .material-symbols-outlined {
@@ -88,7 +88,7 @@ footer {
 }
 
 #score-board-inner {
-    background-color: var(--persian-green);
+    background-color: rgba(var(--persian-green),1);
     padding: 0.3vmin 3vmin;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -98,7 +98,7 @@ footer {
 #score-board-inner > div > img {
     width: 5vmin;
     border-radius: 50%;
-    border:0.4vmin solid var(--light-cyan);
+    border:0.4vmin solid rgba(var(--light-cyan),1);
 }
 
 #score-board-left, #score-board-right{
@@ -147,7 +147,7 @@ footer {
 
 #game-board{
     height: 75%;
-    background-color: var(--light-cyan);
+    background-color: rgba(var(--light-cyan),1);
     position: relative;
     display: grid;
     grid-template-columns: 50% 50%;
@@ -192,14 +192,26 @@ footer {
 #board-one-menu{
     background-color: #b5f5f8;
     width: 30vmin;
-    height: 15vmin;
+    height: 17vmin;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 2vmin;
+}
+
+#board-one-menu > div{
+    cursor: move;
+}
+
+#board-one-menu > div:hover{
+    box-shadow: 0 0 10px rgba(var(--charcoal), 0.5);
 }
 
 #board-two-menu{
     background-color: #b5f5f8;
     width: 30vmin;
     height: 6vmin;
-    margin-bottom: 9vmin;
+    margin-bottom: 11vmin;
 }
 
 .row{
@@ -209,7 +221,11 @@ footer {
 
 .cell{
     background-color: white;
-    border: 0.2vmin solid var(--light-cyan);
+    border: 0.2vmin solid rgba(var(--light-cyan),1);
+}
+
+.hover{
+    background-color: grey !important;
 }
 
 @media screen and (max-width: 800px) {
