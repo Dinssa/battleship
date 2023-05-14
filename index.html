@@ -13,7 +13,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Darumadrop+One&family=Foldit:wght@500;600&family=Montserrat:wght@400;600&family=Roboto:wght@300&display=swap" rel="stylesheet">
 
-    <script defer src="js/main.js"></script>
+    <script defer type="module" src="js/class/Battleship.js"></script>
+    <script defer type="module" src="js/main.js"></script>
+    <script defer type="module" src="js/constants.js"></script>
 </head>
 <body>
     <header>
@@ -35,7 +37,7 @@
             </div>
         </section>
         <section id="message">
-            <p>Message</p>
+            <p></p>
         </section>
         <section id="game-board">
             <div id="game-options">
@@ -49,13 +51,13 @@
             <div id="board-one-outer" class="">
                 <div>
                     <div id="board-one-inner"></div>
-                    <div id="board-one-menu"></div>
+                    <div id="board-one-menu" class="hidden"></div>
                 </div>
             </div>
             <div id="board-two-outer" class="mobile-hide">
                 <div>
                     <div id="board-two-inner"></div>
-                    <div id="board-two-menu"></div>
+                    <div id="board-two-menu" class="hidden"></div>
                 </div>
             </div>
         </section>

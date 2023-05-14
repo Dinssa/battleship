@@ -167,12 +167,12 @@ footer {
     cursor: pointer;
 }
 
-#hiden{
-    display: none;
+.hidden{
+    display: none !important;
 }
 
-#hiden-inplace{
-    visibility: none;
+.hidden-inplace{
+    visibility: hidden !important;
 }
 
 #board-one-outer, #board-two-outer{
