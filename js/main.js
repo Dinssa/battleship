@@ -32,6 +32,9 @@ let game;
 let games = [];
 let gameNum = 0;
 let scores = {};
+let timer;
+let minutes;
+let seconds;
   
 /*----- cached elements  -----*/
 const boardOneEl = document.getElementById('board-one-inner');
@@ -39,6 +42,7 @@ const boardOneMenuEl = document.getElementById('board-one-menu');
 const boardTwoEl = document.getElementById('board-two-inner');
 const msgEl = document.querySelector('#message>p');
 const playBtn = document.querySelector('#controls>button');
+const timerEl = document.getElementById('timer');
 
 /*----- event listeners -----*/
 playBtn.addEventListener('click', init);
@@ -73,6 +77,7 @@ class Board {
         this.boardElement = boardElement;
         this.cellEls = [];
         this.ships = ships;
+        this.shipsPlaced = true;
         this.currentShip = null;
         this.currentShipMousePosition = null;
     }
@@ -137,7 +142,8 @@ class HumanBoard extends Board {
         // console.log(cellPosition)
         let cellX = parseInt(cellPosition[0]);
         let cellY = parseInt(cellPosition[1]);
-        this.cellsToHighlight = [cell.dataset.xy];
+        this.cellsToHighlight = [];
+        this.cellsToHighlight.push(cell.dataset.xy);
         if (ship.orientation === 'vertical'){
             for (let i = ship.length - shipMousePosition; i > 0; i--){
                 if (cellY + i > 9) return; // Guard: if ship is too long to fit on board
@@ -323,7 +329,7 @@ class Player {
 
     }
 
-    placeShips(){
+    placeShips(ship){
 
     }
 }
@@ -386,8 +392,6 @@ class BattleShipGame {
         const playerTwoBoard = new ComputerBoard(this.boardSize, boardTwoEl, playerTwoShips);
         this.playerOne = new HumanPlayer('You', playerOneBoard);
         this.playerTwo = new ComputerPlayer('Computer', playerTwoBoard);
-        this.renderInit();
-        this.render();
     }
 
     renderInit(){
@@ -423,4 +427,34 @@ function init(){
     game = new BattleShipGame(10);
     games.push(game);
     games[gameNum].play();
+    games[gameNum].renderInit();
+    minutes = 5;
+    seconds = 0;
+    msgEl.innerHTML = "Place your ships";
+    inPlay();
+}
+
+function inPlay(){
+    updateTimer();
+    if (games[gameNum].playerOne.board.shipsPlaced === true) timer = setInterval(updateTimer, 1000);
+    setInterval(() => {
+        if (games[gameNum].winner) return;
+        games[gameNum].render();
+
+    }, 200);
+}
+
+function updateTimer(){
+    timerEl.innerHTML = (minutes < 10 ? `0${minutes}` : minutes) + ":" + (seconds < 10 ? `0${seconds}` : seconds);
+    seconds--;
+    if (seconds < 0){
+        seconds = 59;
+        minutes--;
+    }
+    if (minutes === 0 && seconds === 0){
+        clearInterval(timer);
+        timerEl.innerHTML = "00:00";
+        msgEl.innerHTML = "Time's up!";
+        return;
+    }
 }
