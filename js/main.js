@@ -32,9 +32,10 @@ let game;
 let games = [];
 let gameNum = 0;
 let scores = {};
-let timer;
+let timerInterval;
 let minutes;
 let seconds;
+let playInterval;
   
 /*----- cached elements  -----*/
 const boardOneEl = document.getElementById('board-one-inner');
@@ -52,18 +53,23 @@ class Cell {
     constructor(domElement) {
         this.domElement = domElement;
         this.value = 'empty';
+        this.shipName = '';
+        this.renderLookup = {
+            'empty': 'white',
+            'ship' : 'navy',
+            'hit'  : 'orange',
+            'miss' : 'lightgrey',
+            'sunk' : 'red'
+        }
     }
 
-    static renderLookup = {
-        'empty': 'white',
-        'ship' : 'navy',
-        'hit'  : 'orange',
-        'miss' : 'lightgrey',
-        'sunk' : 'red'
+    setShip(shipName){
+        this.shipName = shipName;
+        this.renderLookup.ship = `rgb(${SHIPS[shipName].color})`;
     }
 
     render(){
-        this.domElement.style.backgroundColor = Cell.renderLookup[this.value];
+        this.domElement.style.backgroundColor = this.renderLookup[this.value];
     }
 }
 
@@ -77,7 +83,7 @@ class Board {
         this.boardElement = boardElement;
         this.cellEls = [];
         this.ships = ships;
-        this.shipsPlaced = true;
+        this.shipsPlaced = 0;
         this.currentShip = null;
         this.currentShipMousePosition = null;
     }
@@ -129,7 +135,7 @@ class HumanBoard extends Board {
         this.boardElement.addEventListener('dragover', this.handleDragOver.bind(this));
         this.boardElement.addEventListener('dragleave', this.handleDragLeave.bind(this));
         this.boardElement.addEventListener('drop', this.handleDragDrop.bind(this));
-        this.cellsToHighlight = [];
+        this.cellsBelow = [];
     }
     
     highlightCells(cell){
@@ -142,23 +148,23 @@ class HumanBoard extends Board {
         // console.log(cellPosition)
         let cellX = parseInt(cellPosition[0]);
         let cellY = parseInt(cellPosition[1]);
-        this.cellsToHighlight = [];
-        this.cellsToHighlight.push(cell.dataset.xy);
+        this.cellsBelow = [];
+        this.cellsBelow.push(cell.dataset.xy);
         if (ship.orientation === 'vertical'){
             for (let i = ship.length - shipMousePosition; i > 0; i--){
                 if (cellY + i > 9) return; // Guard: if ship is too long to fit on board
-                this.cellsToHighlight.push(`${cellX}-${cellY + i}`)
+                this.cellsBelow.push(`${cellX}-${cellY + i}`)
             }
             for (let i = shipMousePosition - 1; i > 0; i--){
                 if (cellY - i < 0) return; // Guard: if ship is too long to fit on board
-                this.cellsToHighlight.push(`${cellX}-${cellY - i}`)
+                this.cellsBelow.push(`${cellX}-${cellY - i}`)
             }
-            console.log(this.cellsToHighlight)
+            console.log(this.cellsBelow)
         } else {
 
         }
 
-        this.cellsToHighlight.forEach(xy => document.querySelector(`[data-xy="${xy}"]`).classList.add('hover'))
+        this.cellsBelow.forEach(xy => document.querySelector(`[data-xy="${xy}"]`).classList.add('hover'))
         // console.log(shipLength);
         // console.log(shipOrientation);
         // console.log(SHIPS[games[gameNum].playerOne.board.currentShip].length)
@@ -167,12 +173,29 @@ class HumanBoard extends Board {
 
     unHighlightCells(cell){
         let boardCellEls = document.querySelectorAll('#board-one-inner > .row > .cell');
-        boardCellEls.forEach(cell => (!this.cellsToHighlight.includes(cell.dataset.xy)) ? cell.classList.remove('hover') : null);
-        console.log(boardCellEls);
+        boardCellEls.forEach(cell => (!this.cellsBelow.includes(cell.dataset.xy)) ? cell.classList.remove('hover') : null);
+        // console.log(boardCellEls);
     }
 
-    placeShip(cell, shipLength, orientation){
-
+    placeShip(cell){
+        let ship = games[gameNum].playerOne.board.ships.find(ship => ship.name === games[gameNum].playerOne.board.currentShip);
+        console.log('place ship')
+        console.log(ship)
+        console.log(ship.orientation)
+        console.log(cell)
+        console.log(this.cellsBelow)
+        ship.positionArray = this.cellsBelow;
+        ship.render();
+        // if (ship.orientation === 'vertical'){
+        //     let placeShipAt = this.cellsBelow.reduce((acc, xy) => {
+        //         let y = parseInt(xy.split('-')[1]);
+        //         return (y < acc.y) ? {xy: xy, y: y} : acc;
+        //     }, {xy: '', y: Infinity});
+        //     ship.startPos = placeShipAt.xy;
+        //     ship.render();
+        //     console.log(placeShipAt.xy)
+        // } else {
+        // }
     }
 
     handleDragEnter(evt){
@@ -231,6 +254,7 @@ class Ship {
         this.orientation = 'vertical';
         this.mousePosition = null;
         this.startPos = null;
+        this.positionArray = [];
     }
 
     render(){
@@ -238,14 +262,38 @@ class Ship {
         shipEl.style.height = `${this.length * 3}vmin`;
         shipEl.style.width = '3vmin';
         shipEl.style.backgroundColor = `rgb(${this.color})`;
-        shipEl.draggable = true;
         shipEl.dataset.name = this.name;
         shipEl.dataset.length = this.length;
-        // shipEl.addEventListener('keydown', this.handleKeyDown.bind(this));
-        shipEl.addEventListener('mousedown', this.handleMouseDown.bind(this));
-        shipEl.addEventListener('dragstart', this.handleDragStart.bind(this));
-        shipEl.addEventListener('dragend', this.handleDragEnd.bind(this));
-        boardOneMenuEl.appendChild(shipEl)
+
+        if (this.positionArray.length === 0){
+            shipEl.draggable = true;
+            // shipEl.addEventListener('keydown', this.handleKeyDown.bind(this));
+            shipEl.addEventListener('mousedown', this.handleMouseDown.bind(this));
+            shipEl.addEventListener('dragstart', this.handleDragStart.bind(this));
+            shipEl.addEventListener('dragend', this.handleDragEnd.bind(this));
+            boardOneMenuEl.appendChild(shipEl)
+        } else {
+            shipEl.draggable = false;
+            boardOneMenuEl.removeChild(document.querySelector(`[data-name="${this.name}"]`));
+            console.log(games[gameNum].playerOne.board.cellEls)
+            games[gameNum].playerOne.board.cellEls.forEach(cell => {
+                if (this.positionArray.includes(cell.domElement.dataset.xy)){
+                    cell.value = 'ship';
+                    console.log(cell.domElement)
+                    cell.domElement.classList.remove('hover');
+                    cell.setShip(this.name);
+                }
+            });
+            games[gameNum].playerOne.board.shipsPlaced++;
+
+
+            // shipEl.style.position = 'absolute';
+            // shipEl.style.left = `${this.startPos[0]*4.3}vmin`;
+            // shipEl.style.top = `${this.startPos[1]}vmin`;
+            // shipEl.style.zIndex = '1';
+            // boardOneMenuEl.removeChild(document.querySelector(`[data-name="${this.name}"]`));
+            // boardOneEl.appendChild(shipEl);
+        }
     }
 
     mousePositionOnShip(evt){
@@ -288,7 +336,7 @@ class Ship {
         const shipEl = evt.target;
         console.log('drag end')
         console.log(shipEl.dataset.name)
-        evt.dataTransfer.setData('text/plain', shipEl.dataset.name);
+        // evt.dataTransfer.setData('text/plain', shipEl.dataset.name);
         shipEl.style.opacity = '1';
         shipEl.style.boxShadow = '';
     }
@@ -379,6 +427,7 @@ class BattleShipGame {
         this.boardSize = boardSize;
         this.music = true;
         this.soundEffects = true;
+        this.inPlay = false;
         // this.scores = {};
     }
 
@@ -403,11 +452,16 @@ class BattleShipGame {
     render(){
         this.renderBoard();
         this.renderScoreBoard();
+        this.renderMessage();
     }
 
     renderBoard(){
         this.playerOne.board.render();
         this.playerTwo.board.render();
+    }
+
+    renderMessage(){
+        if (games[gameNum].inPlay) msgEl.innerHTML = "Launch your attack!";
     }
 
     renderScoreBoard(){
@@ -428,18 +482,24 @@ function init(){
     games.push(game);
     games[gameNum].play();
     games[gameNum].renderInit();
+    clearInterval(timerInterval);
     minutes = 5;
     seconds = 0;
+    clearInterval(playInterval);
     msgEl.innerHTML = "Place your ships";
+
     inPlay();
 }
 
 function inPlay(){
     updateTimer();
-    if (games[gameNum].playerOne.board.shipsPlaced === true) timer = setInterval(updateTimer, 1000);
-    setInterval(() => {
+    playInterval = setInterval(() => {
         if (games[gameNum].winner) return;
         games[gameNum].render();
+        if (games[gameNum].playerOne.board.shipsPlaced === 5 && !games[gameNum].inPlay){
+            timerInterval = setInterval(updateTimer, 1000);
+            games[gameNum].inPlay = true;
+        }
 
     }, 200);
 }
@@ -452,7 +512,7 @@ function updateTimer(){
         minutes--;
     }
     if (minutes === 0 && seconds === 0){
-        clearInterval(timer);
+        clearInterval(timerInterval);
         timerEl.innerHTML = "00:00";
         msgEl.innerHTML = "Time's up!";
         return;
