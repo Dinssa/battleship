@@ -29,6 +29,9 @@ import { boardOneEl, boardOneMenuEl, boardTwoMenuEl, boardTwoEl, msgEl, playBtn,
 
 /*----- event listeners -----*/
 playBtn.addEventListener('click', newGame);
+document.addEventListener('keydown', e => {
+    if (playerOneBoard !== undefined) playerOneBoard.toggleOrientation();
+});
   
 /*----- functions -----*/
 init()
@@ -60,7 +63,7 @@ function newGame(){
     playerOneBoard.init();
     playerTwoBoard.init();
     playerOne.initShips(playerOneShips);
-
+    renderInit();
     render();
 
     clearInterval(timerInterval);
@@ -97,6 +100,10 @@ function updateTimer(){
         msgEl.innerHTML = "Time's up!";
         return;
     }
+}
+
+function renderInit(){
+    boardOneMenuEl.style.flexDirection = 'row';
 }
 
 function render(){

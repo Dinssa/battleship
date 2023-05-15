@@ -24,8 +24,13 @@ export class HumanShip extends Ship {
 
     render(){
         const shipEl = document.createElement('div');
-        shipEl.style.height = `${this.length * 3}vmin`;
-        shipEl.style.width = '3vmin';
+        if (this.orientation === 'vertical'){
+            shipEl.style.height = `${this.length * 3}vmin`;
+            shipEl.style.width = '3vmin';
+        } else {
+            shipEl.style.height = '3vmin';
+            shipEl.style.width = `${this.length * 3}vmin`;
+        }
         shipEl.style.backgroundColor = `rgb(${this.color})`;
         shipEl.dataset.name = this.name;
         shipEl.dataset.length = this.length;
@@ -36,7 +41,6 @@ export class HumanShip extends Ship {
             shipEl.addEventListener('mousedown', this.handleMouseDown.bind(this));
             shipEl.addEventListener('dragstart', this.handleDragStart.bind(this));
             shipEl.addEventListener('dragend', this.handleDragEnd.bind(this));
-            shipEl.addEventListener('keypress', this.toggleOrientation.bind(this));
             boardOneMenuEl.appendChild(shipEl)
         } else {
             shipEl.draggable = false;
@@ -61,34 +65,36 @@ export class HumanShip extends Ship {
         }
     }
 
+    getShipOrientation(){
+        return this.orientation;
+    }
+
+    setShipOrientation(orientation){
+        this.orientation = orientation;
+    }
+
+    toggleOrientation(){
+        this.orientation = this.orientation === 'vertical' ? 'horizontal' : 'vertical';
+        // console.log(this.orientation)      
+    }
+
     mousePositionOnShip(evt){
         // console.log('mouse position on ship')
         let bound = evt.target.getBoundingClientRect();
         let mouseY = evt.clientY - bound.top
         let mouseX = evt.clientX - bound.left
         let height = bound.height;
-        console.log(evt.target.dataset.name);
+        // console.log(evt.target.dataset.name);
         let shipLength = SHIPS[evt.target.dataset.name].length;
         // height = window.getComputedStyle(evt.target).getPropertyValue('height');
         let positionY = Math.ceil(mouseY/height * shipLength);
         let positionX = Math.ceil(mouseX/height * shipLength);
+        // console.log(this.getShipOrientation());
 
-        if (this.orientation === 'vertical'){
+        if (this.getShipOrientation() === 'vertical'){
             return positionY;
         } else {
             return positionX;
-        }
-    }
-
-    toggleOrientation(evt){
-
-        console.log(evt.key)
-
-        console.log('toggle orientation')
-        if (this.orientation === 'vertical'){
-            this.orientation = 'horizontal';
-        } else {
-            this.orientation = 'vertical';
         }
     }
 

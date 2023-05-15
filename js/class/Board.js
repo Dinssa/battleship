@@ -73,16 +73,45 @@ class Board {
 export class HumanBoard extends Board {
     constructor(boardSize, boardElement){
         super(boardSize, boardElement);
-        // console.log(this)
         this.boardElement.addEventListener('dragenter', this.handleDragEnter.bind(this));
         this.boardElement.addEventListener('dragover', this.handleDragOver.bind(this));
         this.boardElement.addEventListener('dragleave', this.handleDragLeave.bind(this));
         this.boardElement.addEventListener('drop', this.handleDragDrop.bind(this));
         this.cellsBelow = [];
     }
+
+    toggleOrientation(){
+        // TODO: Add visual orientation of ship while dragging
+        this.getShipOrientation() === 'vertical' ? this.setShipOrientation('horizontal') : this.setShipOrientation('vertical');
+        // console.log(this.currentShipOrientation)
+        // boardOneMenuEl.innerHTML = '';
+        let shipsNotPlaced = this.ships.filter(ship => ship.positionArray.length === 0);
+        console.log(shipsNotPlaced);
+
+        // while (boardOneMenuEl.lastChild) {
+        //     boardOneMenuEl.removeChild(boardOneMenuEl.lastChild);
+        // }
+
+        shipsNotPlaced.forEach(ship => {
+            ship.toggleOrientation();
+            // ship.render();
+            // console.log(ship.getShipOrientation());
+        });
+        console.log(this.currentShipOrientation)        
+    }
+
+    getShipOrientation(){
+        return this.currentShipOrientation;
+    }
+
+    setShipOrientation(orientation){
+        this.currentShipOrientation = orientation;
+    }
     
     highlightCells(cell){
         // TODO: Fix bug where highlighting cells doesn't work properly on the next game
+        // TODO: Fix bug where sometimes highlighted cells linger when ship not placed until placing next ship
+        console.log(this.getShipOrientation())
         let ship = SHIPS[this.currentShip];
         let shipMousePosition = this.currentShipMousePosition;
         let cellPosition = cell.dataset.xy.split('-');
@@ -91,7 +120,7 @@ export class HumanBoard extends Board {
         this.cellsBelow = [];
         this.cellsBelow.push(cell.dataset.xy);
         let validPosition = true;
-        
+        // console.log(this.getShipOrientation())
         if (this.currentShipOrientation === 'vertical'){
             for (let i = ship.length - shipMousePosition; i > 0; i--){
                 if (cellY + i > 9) return; // Guard: if ship is too long to fit on board
@@ -103,7 +132,15 @@ export class HumanBoard extends Board {
                 this.cellsBelow.push(`${cellX}-${cellY - i}`)
             }
         } else {
-            // TODO: Horizontal
+            for (let i = ship.length - shipMousePosition; i > 0; i--){
+                if (cellX + i > 9) return; // Guard: if ship is too long to fit on board
+                if (this.shipPositions.includes(`${cellX + i}-${cellY}`)) return; // Guard: if ship is overlapping another ship
+                this.cellsBelow.push(`${cellX + i}-${cellY}`)
+            }
+            for (let i = shipMousePosition - 1; i > 0; i--){
+                if (cellX - i < 0) return; // Guard: if ship is too long to fit on board
+                this.cellsBelow.push(`${cellX - i}-${cellY}`)
+            }
         }
 
         this.cellsBelow.forEach(xy => {
@@ -113,10 +150,9 @@ export class HumanBoard extends Board {
 
         if (validPosition) this.cellsBelow.forEach(xy => document.querySelector(`[data-xy="${xy}"]`).classList.add('hover'))
 
-
     }
 
-    unHighlightCells(cell){
+    unHighlightCells(){
         let boardCellEls = document.querySelectorAll('#board-one-inner > .row > .cell');
         boardCellEls.forEach(cell => (!this.cellsBelow.includes(cell.dataset.xy)) ? cell.classList.remove('hover') : null);
         document.body.style.cursor = "default";
@@ -151,12 +187,13 @@ export class HumanBoard extends Board {
 
     handleDragOver(evt){
         evt.preventDefault();
+        this.unHighlightCells();
     }
 
     handleDragLeave(evt){
         evt.preventDefault();
         const cell = evt.target;
-        this.unHighlightCells(cell);
+        this.unHighlightCells();
     }
 
     handleDragDrop(evt){

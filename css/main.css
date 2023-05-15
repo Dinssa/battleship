@@ -194,9 +194,11 @@ footer {
     width: 30vmin;
     height: 17vmin;
     display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     column-gap: 2vmin;
+    row-gap: 0.5vmin;
 }
 
 #board-one-menu > div{
