@@ -1,12 +1,10 @@
 import { SHIPS } from '../constants.js';
 import { boardOneMenuEl, boardTwoMenuEl, boardOneEl, boardTwoEl, msgEl, playBtn, timerEl } from '../cached.js';
-import { games, gameNum } from '../main.js';
 
 class Ship {
     constructor(name, board){
         this.name = name;
         this.board = board;
-        // console.log(this.board)
         this.length = SHIPS[name].length;
         this.color = SHIPS[name].color;
         this.img = SHIPS[name].img;
@@ -75,21 +73,17 @@ export class HumanShip extends Ship {
 
     toggleOrientation(){
         this.orientation = this.orientation === 'vertical' ? 'horizontal' : 'vertical';
-        // console.log(this.orientation)      
     }
 
     mousePositionOnShip(evt){
-        // console.log('mouse position on ship')
         let bound = evt.target.getBoundingClientRect();
         let mouseY = evt.clientY - bound.top
         let mouseX = evt.clientX - bound.left
         let height = bound.height;
-        // console.log(evt.target.dataset.name);
         let shipLength = SHIPS[evt.target.dataset.name].length;
         // height = window.getComputedStyle(evt.target).getPropertyValue('height');
         let positionY = Math.ceil(mouseY/height * shipLength);
         let positionX = Math.ceil(mouseX/height * shipLength);
-        // console.log(this.getShipOrientation());
 
         if (this.getShipOrientation() === 'vertical'){
             return positionY;
@@ -97,11 +91,6 @@ export class HumanShip extends Ship {
             return positionX;
         }
     }
-
-    // handleKeyDown(evt){
-    //     console.log('key down')
-    //     console.log(evt.target.keyCode)
-    // }
 
     handleMouseDown(evt){
         console.log('mouse down')

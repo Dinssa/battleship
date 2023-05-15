@@ -72,7 +72,6 @@ function newGame(){
     seconds = 0;
     clearInterval(playInterval);
     
-
     inPlay();
 }
 
@@ -105,6 +104,7 @@ function updateTimer(){
 
 function renderInit(){
     boardOneMenuEl.style.flexDirection = 'row';
+    playerTwoBoard.initCells();
 }
 
 function render(){

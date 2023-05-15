@@ -226,6 +226,10 @@ footer {
     border: 0.2vmin solid rgba(var(--light-cyan),1);
 }
 
+#board-two-inner > .row > .cell{
+    cursor: pointer;
+}
+
 .hover{
     background-color: grey !important;
 }

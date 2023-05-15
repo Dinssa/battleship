@@ -13,7 +13,7 @@ class Board {
         this.shipPositions = [];
         this.currentShip = null;
         this.currentShipMousePosition = null;
-        this.currentShipOrientation = null;
+        this.currentShipOrientation = 'vertical';
     }
 
     setShips(ships){
@@ -22,6 +22,10 @@ class Board {
 
     getShips(){
         return this.ships
+    }
+
+    getCells(){
+        return this.cellEls;
     }
 
     setShipSelection(ship, mousePosition, orientation){
@@ -214,6 +218,35 @@ export class HumanBoard extends Board {
 export class ComputerBoard extends Board {
     constructor(boardSize, boardElement){
         super(boardSize, boardElement);
+        this.handleAttack = this.handleCellClick.bind(this);
+        // boardTwoEl.addEventListener('click', this.handleAttack);
+    }
+
+    initCells(){
+        let cells = boardTwoEl.querySelectorAll('.cell');
+        // console.log(cells);
+        cells.forEach(cell => {
+            cell.addEventListener('click', this.handleAttack);
+        });
+    }
+
+    handleCellClick(evt){
+        console.log('computer board cell clicked');
+        console.log(evt.target.dataset.xy);
+        evt.target.style.cursor = "default";
+        evt.target.removeEventListener('click', this.handleAttack);
+        // console.log(this.cellEls)
+        let cell = this.cellEls.find(cell => cell.domElement.dataset.xy === evt.target.dataset.xy);
+        console.log(cell)
+        if (cell.value === 'ship'){
+            cell.setValue('hit');
+            cell.setShipVisible();
+            cell.render();
+        } else {
+            cell.setValue('miss');
+            console.log(cell)
+            cell.render();
+        }
     }
 
     render(){

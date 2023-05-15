@@ -15,6 +15,10 @@ export class Cell {
         }
     }
 
+    addEventListener(callback){
+        this.domElement.addEventListener(callback);
+    }
+
     setShip(shipName){
         this.shipName = shipName;
         this.renderLookup.ship = `rgb(${SHIPS[shipName].color})`;
@@ -34,7 +38,7 @@ export class Cell {
     }
 
     render(){
-        this.domElement.style.backgroundColor = (this.shipVisible) ? this.renderLookup[this.value] : this.renderLookup['empty'];
+        this.domElement.style.backgroundColor = (this.shipVisible || this.value !== "ship") ? this.renderLookup[this.value] : this.renderLookup['empty'];
     }
 }
 
