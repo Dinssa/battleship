@@ -5,6 +5,7 @@ export class Cell {
         this.domElement = domElement;
         this.value = 'empty';
         this.shipName = '';
+        this.shipVisible = false;
         this.renderLookup = {
             'empty': 'white',
             'ship' : 'navy',
@@ -19,10 +20,24 @@ export class Cell {
         this.renderLookup.ship = `rgb(${SHIPS[shipName].color})`;
     }
 
+    setValue(value){
+        this.value = value;
+        this.render();
+    }
+
+    setShipVisible(){
+        this.shipVisible = true;
+    }
+
+    getValue(){
+        return this.value;
+    }
+
     render(){
-        this.domElement.style.backgroundColor = this.renderLookup[this.value];
+        this.domElement.style.backgroundColor = (this.shipVisible) ? this.renderLookup[this.value] : this.renderLookup['empty'];
     }
 }
+
 
 // class GraphicalCell extends Cell {
 

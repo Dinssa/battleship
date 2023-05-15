@@ -63,6 +63,7 @@ function newGame(){
     playerOneBoard.init();
     playerTwoBoard.init();
     playerOne.initShips(playerOneShips);
+    playerTwoBoard.placeShips();
     renderInit();
     render();
 

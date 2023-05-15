@@ -80,6 +80,13 @@ export class HumanBoard extends Board {
         this.cellsBelow = [];
     }
 
+    render(){
+        this.cellEls.forEach(cell => {
+            cell.setShipVisible();
+            cell.render();
+        });
+    }
+
     toggleOrientation(){
         // TODO: Add visual orientation of ship while dragging
         this.getShipOrientation() === 'vertical' ? this.setShipOrientation('horizontal') : this.setShipOrientation('vertical');
@@ -210,7 +217,60 @@ export class ComputerBoard extends Board {
     }
 
     render(){
-        this.cellEls.forEach(cell => {if (cell.value !== "ship") cell.render()});
+        this.cellEls.forEach(cell => cell.render());
+    }
+
+    placeShips(){
+        let ships = Object.keys(SHIPS);
+        let boardMiddle = Math.floor(this.size / 2) - 1;
+
+        ships.forEach(shipName => {
+            let acceptablePosition = false;
+            let positionArray = [];
+
+            while (acceptablePosition === false) {
+                let startPos = this.getRandomPosition();
+                let orientation = this.getRandomOrientation();
+                let shipArray = [];
+
+                if (orientation === 'vertical'){
+                    let direction = (startPos[1] < boardMiddle) ? 1 : -1; // 1 = down, -1 = up
+                    for (let i = 0; i < SHIPS[shipName].length; i++){
+                        if (startPos[1] + (i * direction) > 9 || startPos[1] + (i * direction) < 0) continue;
+                        shipArray.push(`${startPos[0]}-${startPos[1] + (i * direction)}`)
+                    } 
+                } else {
+                    let direction = (startPos[0] < boardMiddle) ? 1 : -1; // 1 = right, -1 = left
+                    for (let i = 0; i < SHIPS[shipName].length; i++){
+                        if (startPos[0] + (i * direction) > 9 || startPos[0] + (i * direction) < 0) continue;
+                        shipArray.push(`${startPos[0] + (i * direction)}-${startPos[1]}`)
+                    }
+                }
+
+                if (shipArray.every(xy => !positionArray.includes(xy) && !this.shipPositions.includes(xy))) {
+                    positionArray.push(...shipArray);
+                    acceptablePosition = true;
+                  }
+            }
+            this.shipPositions.push(...positionArray);
+            this.cellEls.forEach(cell => {
+                if (positionArray.includes(cell.domElement.dataset.xy)){
+                    cell.setShip(shipName);
+                    cell.setValue('ship');
+                }
+            });
+        });
+        console.log(this.shipPositions);
+    }
+
+    getRandomOrientation(){
+        return Math.random() < 0.5 ? 'vertical' : 'horizontal';
+    }
+
+    getRandomPosition(){
+        let x = Math.floor(Math.random() * 10);
+        let y = Math.floor(Math.random() * 10);
+        return [x, y];
     }
 
 }

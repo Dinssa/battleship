@@ -128,4 +128,9 @@ export class ComputerShip extends Ship {
     constructor(name){
         super(name);
     }
+
+    render(){
+        
+
+    }
 }

@@ -11,10 +11,6 @@ class Player {
     attack(){
 
     }
-
-    placeShips(ship){
-
-    }
 }
 
 export class HumanPlayer extends Player {
@@ -36,10 +32,6 @@ export class HumanPlayer extends Player {
     attack(){
 
     }
-
-    placeShips(){
-        
-    }
 }
 
 export class ComputerPlayer extends Player {
@@ -49,10 +41,6 @@ export class ComputerPlayer extends Player {
     }
 
     attack(){
-
-    }
-
-    placeShips(){
 
     }
 }
