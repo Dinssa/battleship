@@ -26,7 +26,19 @@ let playerTwoShips;
 let message;
   
 /*----- cached elements  -----*/
-import { boardOneEl, boardOneMenuEl, boardTwoMenuEl, boardTwoEl, msgEl, playBtn, timerEl } from './cached.js';
+import { 
+    boardOneEl, 
+    boardOneMenuEl, 
+    boardTwoMenuEl, 
+    boardTwoEl, 
+    msgEl, 
+    playBtn, 
+    timerEl, 
+    gameIntroEl, 
+    boardOneOuterEl,
+    boardTwoOuterEl,
+    scoreBoardEl
+ } from './cached.js';
 
 /*----- event listeners -----*/
 playBtn.addEventListener('click', newGame);
@@ -41,12 +53,18 @@ function init(){
     // newGame();
     boardSize = 10;
     gameNum = 0;
-    msgEl.innerHTML = "press play to start a new game";
+    // msgEl.innerHTML = "press play to start";
 
 }
 
 function newGame(){
     // gameNum++;  // For multiple games
+    gameIntroEl.classList.add('hidden');
+    boardOneOuterEl.classList.remove('hidden');
+    boardTwoOuterEl.classList.remove('hidden');
+    scoreBoardEl.classList.remove('hidden-inplace');
+
+
     const ships = Object.keys(CONSTANTS.SHIPS);
     playerOneBoard = new HumanBoard(boardSize, boardOneEl);
     playerTwoBoard = new ComputerBoard(boardSize, boardTwoEl);

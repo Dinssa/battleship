@@ -38,10 +38,11 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-bottom: 4vmin;
 }
 
-header > p {
-    font-size: 5vmin;
+header > span {
+    font-size: 11vmin;
     color: white;
     font-family: 'Foldit', cursive;
 }
@@ -59,8 +60,51 @@ footer {
     background-color: black;
     color: white;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+footer > p.social {
+    position: absolute;
+    right: 10px;
+    font-size: 3vmin;
+    letter-spacing: 0.5vmin;
+    margin: 0;
+    padding: 0.5vmin;
+    color: white;
+    text-decoration: none;
+}
+
+footer > p.social > a {
+    color: white;
+    text-decoration: none;
+}
+
+#game-intro{
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#game-intro-instructions > h3{
+    margin-top: 0;
+}
+
+#game-intro-instructions{
+    font-size: 1.5vmin;
+    color: white;
+    background-color: rgba(var(--charcoal), 0.5);
+    /* text-align: center; */
+    margin-bottom: 4vmin;
+    padding: 2vmin 2vmin;
+}
+
+#game-intro-instructions > div{
+    padding: 2px 0;
+}
 #game-options{
     background-color: black;
     position: absolute;
@@ -163,9 +207,18 @@ footer {
 }
 
 #controls > button {
-    padding: 1vmin 2vmin;
+    padding: 1vmin 7vmin;
     cursor: pointer;
+    color: white;
+    border: none;
+    text-transform: uppercase;
+    background-color: rgba(180, 55, 24, 1);
 }
+
+#controls > button:hover {
+    background-color: rgba(180, 55, 24, 0.6);
+}
+
 
 .hidden{
     display: none !important;
@@ -256,5 +309,17 @@ footer {
         font-size: 6vmin;
         padding-top: 1vmin;
         padding-bottom: 1vmin;
+    }
+
+    footer {
+        font-size: 60%;
+    }
+
+    footer > p.social {
+        position: absolute;
+        font-size: 100%;
+        letter-spacing: 0.5vmin;
+        margin: 0;
+        padding: 0.5vmin;
     }
   }

@@ -9,9 +9,9 @@ export class Cell {
         this.renderLookup = {
             'empty': 'white',
             'ship' : 'navy',
-            'hit'  : 'orange',
+            'hit'  : 'firebrick',
             'miss' : 'lightgrey',
-            'sunk' : 'red'
+            'sunk' : 'indianred'
         }
     }
 
