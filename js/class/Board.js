@@ -1,7 +1,7 @@
 import { Cell } from './Cell.js';
 import { boardOneEl, boardOneMenuEl, boardTwoMenuEl, boardTwoEl, msgEl, playBtn, timerEl } from '../cached.js';
 import { SHIPS } from '../constants.js';
-
+import { gameNum, games } from '../main.js';
 
 class Board {
     constructor(boardSize, boardElement){
@@ -9,6 +9,7 @@ class Board {
         this.boardElement = boardElement;
         this.cellEls = [];
         this.ships;
+        this.player;
         this.shipsPlaced = 0;
         this.shipPositions = [];
         this.currentShip = null;
@@ -24,8 +25,24 @@ class Board {
         return this.ships
     }
 
+    setPlayer(player){
+        this.player = player;
+    }
+
+    getPlayer(){
+        return this.player
+    }
+
+    getPlayerNumAttacks(){
+        return this.player.getNumAttacks();
+    }
+
     getCells(){
         return this.cellEls;
+    }
+
+    getCell(xy){
+        return this.cellEls.find(cell => cell.domElement.dataset.xy === xy);
     }
 
     setShipSelection(ship, mousePosition, orientation){
@@ -219,34 +236,43 @@ export class ComputerBoard extends Board {
     constructor(boardSize, boardElement){
         super(boardSize, boardElement);
         this.handleAttack = this.handleCellClick.bind(this);
-        // boardTwoEl.addEventListener('click', this.handleAttack);
     }
 
     initCells(){
-        let cells = boardTwoEl.querySelectorAll('.cell');
-        // console.log(cells);
-        cells.forEach(cell => {
-            cell.addEventListener('click', this.handleAttack);
+        this.cellEls.forEach(cell => {
+            cell.domElement.addEventListener('click', this.handleAttack);
         });
     }
 
-    handleCellClick(evt){
-        console.log('computer board cell clicked');
-        console.log(evt.target.dataset.xy);
-        evt.target.style.cursor = "default";
-        evt.target.removeEventListener('click', this.handleAttack);
-        // console.log(this.cellEls)
+    handleCellClick(evt){      
         let cell = this.cellEls.find(cell => cell.domElement.dataset.xy === evt.target.dataset.xy);
-        console.log(cell)
         if (cell.value === 'ship'){
             cell.setValue('hit');
+            this.player.addHit(cell.domElement.dataset.xy);
             cell.setShipVisible();
             cell.render();
         } else {
             cell.setValue('miss');
-            console.log(cell)
+            this.player.addMiss(cell.domElement.dataset.xy);
             cell.render();
         }
+        games[gameNum].toggleTurn();
+        evt.target.style.cursor = "default";
+        evt.target.removeEventListener('click', this.handleAttack);
+    }
+
+    disableCells(){
+        this.cellEls.forEach(cell => {
+            cell.domElement.removeEventListener('click', this.handleAttack);
+            cell.domElement.style.cursor = "default";
+        });
+    }
+
+    enableCells(){
+        this.cellEls.forEach(cell => {
+            if (cell.value === "empty" || cell.value === "ship" ) cell.domElement.addEventListener('click', this.handleAttack);
+            cell.domElement.style.cursor = "pointer";
+        });
     }
 
     render(){
@@ -293,7 +319,6 @@ export class ComputerBoard extends Board {
                 }
             });
         });
-        console.log(this.shipPositions);
     }
 
     getRandomOrientation(){

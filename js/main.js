@@ -23,6 +23,7 @@ let playerOneBoard;
 let playerTwoBoard;
 let playerOneShips;
 let playerTwoShips;
+let message;
   
 /*----- cached elements  -----*/
 import { boardOneEl, boardOneMenuEl, boardTwoMenuEl, boardTwoEl, msgEl, playBtn, timerEl } from './cached.js';
@@ -51,11 +52,25 @@ function newGame(){
     playerTwoBoard = new ComputerBoard(boardSize, boardTwoEl);
     playerOneShips = ships.map(ship => new HumanShip(ship, playerOneBoard));
     playerTwoShips = ships.map(ship => new ComputerShip(ship, playerTwoBoard));
-    playerOneBoard.setShips(playerOneShips);
-    playerTwoBoard.setShips(playerTwoShips);
     playerOne = new HumanPlayer('You');
     playerTwo = new ComputerPlayer('Computer');
     game = new BattleShipGame();
+
+    // TODO: Refactor this
+    playerOneBoard.setShips(playerOneShips);
+    playerTwoBoard.setShips(playerTwoShips);
+    playerOneBoard.setPlayer(playerOne);
+    playerTwoBoard.setPlayer(playerTwo);
+
+    playerOne.setBoard(playerOneBoard);
+    playerOne.setOpponentBoard(playerTwoBoard);
+    playerOne.setShips(playerOneShips);
+    playerOne.setGame(game);
+
+    playerTwo.setBoard(playerTwoBoard);
+    playerTwo.setOpponentBoard(playerOneBoard);
+    playerTwo.setShips(playerTwoShips);
+    playerTwo.setGame(game);
     
     games.push(game);
     games[gameNum].init();
@@ -65,6 +80,7 @@ function newGame(){
     playerOne.initShips(playerOneShips);
     playerTwoBoard.placeShips();
     renderInit();
+    message = "Place your ships";
     render();
 
     clearInterval(timerInterval);
@@ -77,12 +93,38 @@ function newGame(){
 
 function inPlay(){
     updateTimer();
+    let playOne = true;
+    let playTwo = false;
     playInterval = setInterval(() => {
         if (games[gameNum].winner) return;
+        
         render();
         if (playerOneBoard.shipsPlaced === 5 && !games[gameNum].inPlay){
             timerInterval = setInterval(updateTimer, 1000);
             games[gameNum].play();
+        }
+
+        if (games[gameNum].inPlay){
+            if (games[gameNum].turn === 1 && playOne) {
+                // Player One's turn ( === 1)
+                message = `It's your turn!`;
+                playerTwoBoard.enableCells();
+                console.log(playerOne.hits)
+                console.log(playerTwo.hits)
+                // if (playerOne.getNumAttacks() > playerTwo.getNumAttacks()) games[gameNum].toggleTurn();
+                console.log('turn: ', games[gameNum].turn)
+                console.log('playerOne: ', playerOne.getNumAttacks())
+                console.log('playerTwo: ', playerTwo.getNumAttacks())
+                playOne = false;
+                playTwo = true;
+            } else if (games[gameNum].turn === -1 && playTwo) {
+                // Player Two's turn ( === -1)
+                message = `It's ${playerTwo.getName()}'s turn!`;
+                playerTwoBoard.disableCells();
+                playerTwo.attack();
+                playTwo = false;
+                playOne = true;
+            }
         }
     }, 200);
 }
@@ -97,14 +139,14 @@ function updateTimer(){
     if (minutes === 0 && seconds === 0){
         clearInterval(timerInterval);
         timerEl.innerHTML = "00:00";
-        msgEl.innerHTML = "Time's up!";
+        message = "Time's up!";
         return;
     }
 }
 
 function renderInit(){
     boardOneMenuEl.style.flexDirection = 'row';
-    playerTwoBoard.initCells();
+    // playerTwoBoard.initCells();
 }
 
 function render(){
@@ -114,5 +156,5 @@ function render(){
 }
 
 function renderMessage(){
-    if (playerOneBoard.shipsPlaced === 5 && games[gameNum].inPlay) msgEl.innerHTML = "Launch your attack!";
+    if (playerOneBoard.shipsPlaced === 5 && games[gameNum].inPlay) msgEl.innerHTML = message;
 }

@@ -16,6 +16,10 @@ export class BattleShipGame {
         this.inPlay = true;
     }
 
+    toggleTurn(){
+        this.turn *= -1;
+    }
+
     renderInit(){
         // this.playerOne.board.init();
         // this.playerTwo.board.init();

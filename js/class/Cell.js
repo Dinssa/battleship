@@ -15,10 +15,6 @@ export class Cell {
         }
     }
 
-    addEventListener(callback){
-        this.domElement.addEventListener(callback);
-    }
-
     setShip(shipName){
         this.shipName = shipName;
         this.renderLookup.ship = `rgb(${SHIPS[shipName].color})`;
