@@ -62,7 +62,7 @@ function newGame(){
     gameIntroEl.classList.add('hidden');
     boardOneOuterEl.classList.remove('hidden');
     boardTwoOuterEl.classList.remove('hidden');
-    scoreBoardEl.classList.remove('hidden-inplace');
+    scoreBoardEl.classList.remove('hidden');
     playBtn.classList.add('hidden-inplace');
 
 

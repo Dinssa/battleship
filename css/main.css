@@ -88,6 +88,8 @@ footer > p.social > a {
     justify-content: center;
     align-items: center;
     position: relative;
+    /* background-image: url("../assets/oceanbg1.gif");
+    background-size: cover; */
 }
 
 #game-intro-instructions > h3{
@@ -144,6 +146,8 @@ footer > p.social > a {
 
 input, select {
     width: 15vmin;
+    height: 2vmin;
+    font-size: 1.5vmin;
     color: white;
     border: 0;
     background-color: rgba(0, 0, 24, 0.3);
@@ -261,7 +265,7 @@ select option {
     background-color: black;
     padding: 0.5vmin 2vmin;
     position: absolute;
-    bottom: -2.8vmin;
+    bottom: -2vmin;
     left: -15%;
     color: rgba(var(--light-cyan), 1);
 }
@@ -299,6 +303,7 @@ select option {
 
 #controls > button {
     padding: 1vmin 7vmin;
+    font-size: 2vmin;
     cursor: pointer;
     color: white;
     border: none;
