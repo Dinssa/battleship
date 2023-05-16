@@ -10,3 +10,5 @@ export const boardOneOuterEl = document.getElementById('board-one-outer');
 export const boardTwoOuterEl = document.getElementById('board-two-outer');
 export const gameIntroEl = document.getElementById('game-intro');
 export const scoreBoardEl = document.getElementById('score-board-outer');
+
+export const gameCustomisationAvaterSelectEl = document.getElementById('avatar');

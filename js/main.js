@@ -37,7 +37,8 @@ import {
     gameIntroEl, 
     boardOneOuterEl,
     boardTwoOuterEl,
-    scoreBoardEl
+    scoreBoardEl,
+    gameCustomisationAvaterSelectEl
  } from './cached.js';
 
 /*----- event listeners -----*/
@@ -45,6 +46,7 @@ playBtn.addEventListener('click', newGame);
 document.addEventListener('keydown', e => {
     if (playerOneBoard !== undefined && e.key === 'r') playerOneBoard.toggleOrientation();
 });
+gameCustomisationAvaterSelectEl.addEventListener('click', setAvatar);
   
 /*----- functions -----*/
 init()
@@ -190,6 +192,14 @@ function updateTimer(){
         message = "Time's up!";
         return;
     }
+}
+
+function setAvatar(evt){
+    const avatarScoreBoard = document.querySelector('#avatar-scoreboard');
+    const avatarPreview = document.querySelector('#avatar-preview');
+    const avatar = event.target;
+    avatarScoreBoard.src = `./assets/avatar/${avatar.value}.jpg`;
+    avatarPreview.src = `./assets/avatar/${avatar.value}.jpg`;
 }
 
 function renderInit(){
