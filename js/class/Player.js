@@ -36,6 +36,10 @@ class Player {
         this.hits.push(xy);
     }
 
+    getHits(){
+        return this.hits;
+    }
+
     addMiss(xy){
         this.misses.push(xy);
     }
@@ -86,7 +90,7 @@ export class ComputerPlayer extends Player {
             }
             this.game.toggleTurn();
             console.log('turn: ', this.game.turn)
-        }, 2000); 
+        }, 1000); 
     }
 
     getRandomCellXY(){

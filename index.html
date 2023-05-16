@@ -52,6 +52,49 @@
                     <div>Release the ship to place on highlighted squares.</div>
                     <div>Click on the <b>PLAY</b> button to start the game.</div>
                 </div>
+                <div id="game-customisation">
+                    <h3 class="">Game Customisation</h3>
+                    <div id="avatar-selection">
+                        <img id="avatar-img" src="assets/profile/human-player.jpg">
+                        <div class="game-option-labels">AVATAR</div>
+                        <select id="avatar">
+                            <option value="human">Human</option>
+                            <option value="pirate">Pirate</option>
+                            <option value="commodore">Commodore</option>
+                            <option value="sailor">Sailor</option>
+                            <option value="captain">Captain</option>
+                            <option value="admiral">Admiral</option>
+                            <option value="commander">Commander</option>
+                            <option value="lieutenant">Lieutenant</option>
+                            <option value="ensign">Ensign</option>
+                        </select>
+                    </div>
+
+                    <p>Customise your game or leave with default options.</p>
+                    <div class="game-customisation-options">
+                        <span class="game-option-labels">PLAYER NAME</span>
+                        <input type="text" id="playerName" placeholder="Default: 'You'">
+                    </div>
+
+                    <div class="game-customisation-options">
+                        <span class="game-option-labels">DIFFICULTY</span>
+                        <select id="opponent">
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                    <div class="game-customisation-options">
+                        <span class="game-option-labels">WAR</span>
+                        <select id="opponent">
+                            <option value="quick">Quick (3 ships)</option>
+                            <option value="standard" selected>Standard (5 ships)</option>
+                            <option value="prolonged">Prolonged (7 ships)</option>
+                            <option value="marathon">Marathon (10 ships)</option>
+                        </select>
+                    </div>
+                    
+                </div>
             </div>
             <div id="game-options">
                 <span class="material-symbols-outlined">leaderboard</span>
