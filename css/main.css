@@ -265,8 +265,8 @@ select option {
     background-color: black;
     padding: 0.5vmin 2vmin;
     position: absolute;
-    bottom: -2vmin;
-    left: -15%;
+    bottom: -50%;
+    /* left: -10%; */
     color: rgba(var(--light-cyan), 1);
 }
 

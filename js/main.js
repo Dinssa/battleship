@@ -150,26 +150,31 @@ function inPlay(){
     }, 200);
 }
 
-// function getWinner(){
-//     return winByTimeOut() || winBySunkShip();
-// };
+function getWinner(){
 
-// function winBySunkShip(){
-//     let totalShipLengths = Object.values(CONSTANTS.SHIPS).reduce(function (acc, ship) { return acc + ship.length; }, 0);
-//     if (playerOne.getHits() === totalShipLengths) return playerOne;
-//     if (playerTwo.getHits() === totalShipLengths) return playerTwo;
-//     return false;
-// }
+    if (winByTimeOut() || winBySunkShip()){
+        games[gameNum].inPlay = false;
+        return true;
+    }
+    return winByTimeOut() || winBySunkShip();
+};
 
-// function winByTimeOut(){
-//     if (minutes === 0 && seconds === 0){
-//         console.log('time out')
+function winBySunkShip(){
+    let totalShipLengths = Object.values(CONSTANTS.SHIPS).reduce(function (acc, ship) { return acc + ship.length; }, 0);
+    if (playerOne.getHits() === totalShipLengths) return playerOne;
+    if (playerTwo.getHits() === totalShipLengths) return playerTwo;
+    return false;
+}
 
-//         message = "Time's up!";
-//         return true;
-//     }
-//     return false;
-// }
+function winByTimeOut(){
+    if (minutes === 0 && seconds === 0){
+        console.log('time out')
+        playerTwoBoard.disableCells();
+        message = "Time's up!";
+        return true;
+    }
+    return false;
+}
 
 function updateTimer(){
     timerEl.innerHTML = (minutes < 10 ? `0${minutes}` : minutes) + ":" + (seconds < 10 ? `0${seconds}` : seconds);
@@ -181,7 +186,8 @@ function updateTimer(){
     if (minutes === 0 && seconds === 0){
         clearInterval(timerInterval);
         timerEl.innerHTML = "00:00";
-        // message = "Time's up!";
+
+        message = "Time's up!";
         return;
     }
 }
