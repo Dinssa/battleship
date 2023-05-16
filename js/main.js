@@ -43,7 +43,7 @@ import {
 /*----- event listeners -----*/
 playBtn.addEventListener('click', newGame);
 document.addEventListener('keydown', e => {
-    if (playerOneBoard !== undefined) playerOneBoard.toggleOrientation();
+    if (playerOneBoard !== undefined && e.key === 'r') playerOneBoard.toggleOrientation();
 });
   
 /*----- functions -----*/
@@ -63,6 +63,7 @@ function newGame(){
     boardOneOuterEl.classList.remove('hidden');
     boardTwoOuterEl.classList.remove('hidden');
     scoreBoardEl.classList.remove('hidden-inplace');
+    playBtn.classList.add('hidden-inplace');
 
 
     const ships = Object.keys(CONSTANTS.SHIPS);
@@ -127,12 +128,12 @@ function inPlay(){
                 // Player One's turn ( === 1)
                 message = `It's your turn!`;
                 playerTwoBoard.enableCells();
-                console.log(playerOne.hits)
-                console.log(playerTwo.hits)
+                // console.log(playerOne.hits)
+                // console.log(playerTwo.hits)
                 // if (playerOne.getNumAttacks() > playerTwo.getNumAttacks()) games[gameNum].toggleTurn();
-                console.log('turn: ', games[gameNum].turn)
-                console.log('playerOne: ', playerOne.getNumAttacks())
-                console.log('playerTwo: ', playerTwo.getNumAttacks())
+                // console.log('turn: ', games[gameNum].turn)
+                // console.log('playerOne: ', playerOne.getNumAttacks())
+                // console.log('playerTwo: ', playerTwo.getNumAttacks())
                 playOne = false;
                 playTwo = true;
             } else if (games[gameNum].turn === -1 && playTwo) {
@@ -144,8 +145,31 @@ function inPlay(){
                 playOne = true;
             }
         }
+
+        // games[gameNum].winner = getWinner();
     }, 200);
 }
+
+// function getWinner(){
+//     return winByTimeOut() || winBySunkShip();
+// };
+
+// function winBySunkShip(){
+//     let totalShipLengths = Object.values(CONSTANTS.SHIPS).reduce(function (acc, ship) { return acc + ship.length; }, 0);
+//     if (playerOne.getHits() === totalShipLengths) return playerOne;
+//     if (playerTwo.getHits() === totalShipLengths) return playerTwo;
+//     return false;
+// }
+
+// function winByTimeOut(){
+//     if (minutes === 0 && seconds === 0){
+//         console.log('time out')
+
+//         message = "Time's up!";
+//         return true;
+//     }
+//     return false;
+// }
 
 function updateTimer(){
     timerEl.innerHTML = (minutes < 10 ? `0${minutes}` : minutes) + ":" + (seconds < 10 ? `0${seconds}` : seconds);
@@ -157,7 +181,7 @@ function updateTimer(){
     if (minutes === 0 && seconds === 0){
         clearInterval(timerInterval);
         timerEl.innerHTML = "00:00";
-        message = "Time's up!";
+        // message = "Time's up!";
         return;
     }
 }

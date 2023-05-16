@@ -148,7 +148,7 @@ footer > p.social > a {
 #score-board-left, #score-board-right{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 1fr;
     justify-content: center;
     text-align: center;
 }
@@ -160,7 +160,7 @@ footer > p.social > a {
 }
 
 #score-board-left > div:first-child, #score-board-right > div {
-    align-self: flex-end;
+    align-self: center;
 }
 
 #score-board-middle{
@@ -173,6 +173,19 @@ footer > p.social > a {
 
 #score-board-middle > span {
     padding: 0 0.5vmin;
+}
+
+#score-board-left{
+    position: relative;
+}
+
+#timer{
+    background-color: black;
+    padding: 0.5vmin 2vmin;
+    position: absolute;
+    bottom: -2.8vmin;
+    left: -15%;
+    color: rgba(var(--light-cyan), 1);
 }
 
 #message{
