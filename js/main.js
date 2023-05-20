@@ -23,7 +23,6 @@ let playerOneBoard;
 let playerTwoBoard;
 let playerOneShips;
 let playerTwoShips;
-let message;
   
 /*----- cached elements  -----*/
 import { 
@@ -52,23 +51,23 @@ gameCustomisationAvaterSelectEl.addEventListener('click', setAvatar);
 init()
 
 function init(){
-    // newGame();
     boardSize = 10;
-    gameNum = 0;
-    // msgEl.innerHTML = "press play to start";
-
+    gameNum = -1; // Starts at -1 so that newGame() increments to 0
 }
 
 function newGame(){
-    // gameNum++;  // For multiple games
+    // * Hide intro screen and show game screen
     gameIntroEl.classList.add('hidden');
     boardOneOuterEl.classList.remove('hidden');
     boardTwoOuterEl.classList.remove('hidden');
     scoreBoardEl.classList.remove('hidden');
     playBtn.classList.add('hidden-inplace');
 
+    // * Initialise game variables
+    gameNum++; // Allows for multiple games
+    const ships = Object.keys(CONSTANTS.SHIPS); // Array of ship names
 
-    const ships = Object.keys(CONSTANTS.SHIPS);
+    // * Initialise game classes
     playerOneBoard = new HumanBoard(boardSize, boardOneEl);
     playerTwoBoard = new ComputerBoard(boardSize, boardTwoEl);
     playerOneShips = ships.map(ship => new HumanShip(ship, playerOneBoard));
@@ -77,77 +76,79 @@ function newGame(){
     playerTwo = new ComputerPlayer('Computer');
     game = new BattleShipGame();
 
-    // TODO: Refactor this
+    // * Set board ships and player
     playerOneBoard.setShips(playerOneShips);
     playerTwoBoard.setShips(playerTwoShips);
     playerOneBoard.setPlayer(playerOne);
     playerTwoBoard.setPlayer(playerTwo);
 
+    // * Set player boards, ships and opponent board
     playerOne.setBoard(playerOneBoard);
-    playerOne.setOpponentBoard(playerTwoBoard);
     playerOne.setShips(playerOneShips);
-    playerOne.setGame(game);
-
+    playerOne.setOpponentBoard(playerTwoBoard);
     playerTwo.setBoard(playerTwoBoard);
-    playerTwo.setOpponentBoard(playerOneBoard);
     playerTwo.setShips(playerTwoShips);
-    playerTwo.setGame(game);
+    playerTwo.setOpponentBoard(playerOneBoard);
+
+    // * Add players to game
+    game.setPlayerOne(playerOne);
+    game.setPlayerTwo(playerTwo);
     
     games.push(game);
     games[gameNum].init();
 
-    playerOneBoard.init();
-    playerTwoBoard.init();
-    playerOne.initShips(playerOneShips);
-    playerTwoBoard.placeShips();
+    // * Initialise boards
+    games[gameNum].playerOne.board.init();
+    games[gameNum].playerTwo.board.init();
+
+    // * Initialise ships
+    games[gameNum].playerOne.initShips();
+    games[gameNum].playerTwo.board.placeShips();
+
     renderInit();
-    message = "Place your ships";
+    games[gameNum].changeMessage("Place your ships");
     render();
 
+    // * Clear intervals, new timer and new game (play)
     clearInterval(timerInterval);
+    clearInterval(playInterval);
+
+    // * Set game time as 5 minutes
     minutes = 5;
     seconds = 0;
-    clearInterval(playInterval);
     
+    // * Start game
     inPlay();
 }
 
 function inPlay(){
-    updateTimer();
-    let playOne = true;
-    let playTwo = false;
+    updateTimer(); // Update timer once before setInterval, showing full game time
+    let playOne = true; // Boolean to check if player one has played yet, used to alternate turns only after players have played 
     playInterval = setInterval(() => {
-        if (games[gameNum].winner) return;
+        if (games[gameNum].winner) return; // If there is a winner, stop playing
         
         render();
-        if (playerOneBoard.shipsPlaced === 5 && !games[gameNum].inPlay){
+
+        // * If player one has placed all ships and game is not in play, start game
+        if (games[gameNum].playerOne.board.shipsPlaced === 5 && !games[gameNum].inPlay){
             timerInterval = setInterval(updateTimer, 1000);
             games[gameNum].play();
         }
 
+        // * If game is in play, play who's turn it is
         if (games[gameNum].inPlay){
             if (games[gameNum].turn === 1 && playOne) {
-                // Player One's turn ( === 1)
-                message = `It's your turn!`;
-                playerTwoBoard.enableCells();
-                // console.log(playerOne.hits)
-                // console.log(playerTwo.hits)
-                // if (playerOne.getNumAttacks() > playerTwo.getNumAttacks()) games[gameNum].toggleTurn();
-                // console.log('turn: ', games[gameNum].turn)
-                // console.log('playerOne: ', playerOne.getNumAttacks())
-                // console.log('playerTwo: ', playerTwo.getNumAttacks())
+                games[gameNum].changeMessage("It's your turn!");
+                games[gameNum].playerTwo.board.enableCells();
                 playOne = false;
-                playTwo = true;
-            } else if (games[gameNum].turn === -1 && playTwo) {
-                // Player Two's turn ( === -1)
-                message = `It's ${playerTwo.getName()}'s turn!`;
-                playerTwoBoard.disableCells();
-                playerTwo.attack();
-                playTwo = false;
+            } else if (games[gameNum].turn === -1 && !playOne) {
+                games[gameNum].changeMessage(`It's ${playerTwo.getName()}'s turn!`);
+                games[gameNum].playerTwo.board.disableCells();
+                games[gameNum].playerTwo.attack();
                 playOne = true;
             }
         }
-
+        // TODO: WINNER
         // games[gameNum].winner = getWinner();
     }, 200);
 }
@@ -163,16 +164,16 @@ function getWinner(){
 
 function winBySunkShip(){
     let totalShipLengths = Object.values(CONSTANTS.SHIPS).reduce(function (acc, ship) { return acc + ship.length; }, 0);
-    if (playerOne.getHits() === totalShipLengths) return playerOne;
-    if (playerTwo.getHits() === totalShipLengths) return playerTwo;
+    if (games[gameNum].playerOne.getHits() === totalShipLengths) return games[gameNum].playerOne;
+    if (games[gameNum].playerTwo.getHits() === totalShipLengths) return games[gameNum].playerTwo;
     return false;
 }
 
 function winByTimeOut(){
     if (minutes === 0 && seconds === 0){
         console.log('time out')
-        playerTwoBoard.disableCells();
-        message = "Time's up!";
+        games[gameNum].playerTwo.board.disableCells();
+        games[gameNum].changeMessage("Time's up!");
         return true;
     }
     return false;
@@ -189,7 +190,7 @@ function updateTimer(){
         clearInterval(timerInterval);
         timerEl.innerHTML = "00:00";
 
-        message = "Time's up!";
+        games[gameNum].changeMessage("Time's up!");
         return;
     }
 }
@@ -197,7 +198,7 @@ function updateTimer(){
 function setAvatar(evt){
     const avatarScoreBoard = document.querySelector('#avatar-scoreboard');
     const avatarPreview = document.querySelector('#avatar-preview');
-    const avatar = event.target;
+    const avatar = evt.target;
     avatarScoreBoard.src = `./assets/avatar/${avatar.value}.jpg`;
     avatarPreview.src = `./assets/avatar/${avatar.value}.jpg`;
 }
@@ -208,11 +209,6 @@ function renderInit(){
 }
 
 function render(){
-    renderMessage();
-    playerOneBoard.render();
-    playerTwoBoard.render();
-}
-
-function renderMessage(){
-    if (playerOneBoard.shipsPlaced === 5 && games[gameNum].inPlay) msgEl.innerHTML = message;
+    games[gameNum].playerOne.board.render();
+    games[gameNum].playerTwo.board.render();
 }

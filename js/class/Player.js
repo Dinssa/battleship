@@ -1,4 +1,4 @@
-import { boardOneEl, boardOneMenuEl, boardTwoMenuEl, boardTwoEl, msgEl, playBtn, timerEl } from '../cached.js'; 
+import { games, gameNum } from '../main.js';
 
 class Player {
     constructor(name){
@@ -8,7 +8,6 @@ class Player {
         this.score = 0;
         this.board;
         this.opponentBoard;
-        this.game;
         this.ships;
     }
 
@@ -26,10 +25,6 @@ class Player {
 
     setShips(ships){
         this.ships = ships;
-    }
-
-    setGame(game){
-        this.game = game;
     }
 
     addHit(xy){
@@ -55,13 +50,8 @@ export class HumanPlayer extends Player {
         this.currentShip = null;
     }
 
-    handleMouseDownShip(evt){
-        console.log('mouse down on ship')
-    }
-
-    initShips(ships){
-        msgEl.innerHTML = "Place your ships";
-        this.ships = ships;
+    initShips(){
+        games[gameNum].changeMessage("Place your ships");
         this.ships.forEach(ship => ship.render());
     }
 
@@ -77,7 +67,6 @@ export class ComputerPlayer extends Player {
         setTimeout(() => {
             const xy = this.getRandomCellXY();
             const cell = this.opponentBoard.getCell(xy);
-            console.log(cell);
             if (cell.getValue() === 'ship'){
                 this.target = xy;
                 cell.setValue('hit');
@@ -88,8 +77,7 @@ export class ComputerPlayer extends Player {
                 cell.setValue('miss');
                 this.addMiss(xy);
             }
-            this.game.toggleTurn();
-            console.log('turn: ', this.game.turn)
+            games[gameNum].toggleTurn();
         }, 1000); 
     }
 

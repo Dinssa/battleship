@@ -1,3 +1,5 @@
+import { boardOneEl, boardOneMenuEl, boardTwoMenuEl, boardTwoEl, msgEl, playBtn, timerEl } from '../cached.js'; 
+
 export class BattleShipGame {
     constructor(){
         this.music = false;
@@ -5,6 +7,8 @@ export class BattleShipGame {
         this.inPlay = false;
         this.winner = null;
         this.turn = 1;
+        this.playerOne = null;
+        this.playerTwo = null;
     }
 
     init(){
@@ -18,6 +22,18 @@ export class BattleShipGame {
 
     toggleTurn(){
         this.turn *= -1;
+    }
+
+    setPlayerOne(player){
+        this.playerOne = player;
+    }
+
+    setPlayerTwo(player){
+        this.playerTwo = player;
+    }
+
+    changeMessage(message){
+        msgEl.innerText = message;
     }
 
     renderInit(){
