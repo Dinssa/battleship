@@ -149,7 +149,8 @@ function inPlay(){
             }
         }
         games[gameNum].winner = getWinner();
-        if (games[gameNum].winner !== false) games[gameNum].changeMessage(`${games[gameNum].winner.getName()} wins!`);
+        if (games[gameNum].winner !== false && (minutes > 0 || seconds > 0)) games[gameNum].changeMessage(`${games[gameNum].winner.getName()} wins!`);
+        if (games[gameNum].winner !== false) games[gameNum].changeMessage(`Time's up! ${games[gameNum].winner.getName()} wins.`);
     }, 200);
 }
 
@@ -175,7 +176,14 @@ function winByTimeOut(){
         console.log('time out')
         games[gameNum].playerTwo.board.disableCells();
         games[gameNum].changeMessage("Time's up!");
-        return true;
+        
+        if (games[gameNum].playerTwo.getHits().length > games[gameNum].playerOne.getHits().length) {
+            return games[gameNum].playerOne;
+        } else if (games[gameNum].playerTwo.getHits().length < games[gameNum].playerOne.getHits().length){
+            return games[gameNum].playerTwo;
+        } else {
+            return {getName: () => 'No one'}
+        }
     }
     return false;
 }
