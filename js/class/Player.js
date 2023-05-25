@@ -70,20 +70,25 @@ export class ComputerPlayer extends Player {
             if (cell.getValue() === 'ship'){
                 this.target = xy;
                 cell.setValue('hit');
-                this.addHit(xy);
-                this.score++;
-                if (this.score === 17) this.game.winner = this;
+                games[gameNum].playerOne.addHit(xy);
             } else if (cell.getValue() === 'empty') {
                 cell.setValue('miss');
-                this.addMiss(xy);
+                games[gameNum].playerOne.addMiss(xy);
             }
             games[gameNum].toggleTurn();
         }, 1000); 
     }
 
     getRandomCellXY(){
-        const x = Math.floor(Math.random() * 10);
-        const y = Math.floor(Math.random() * 10);
+        let x = Math.floor(Math.random() * 10);
+        let y = Math.floor(Math.random() * 10);
+
+        // * If cell has already been attacked, get new random cell
+        while (this.opponentBoard.getCell(`${x}-${y}`).getValue() === 'hit' || this.opponentBoard.getCell(`${x}-${y}`).getValue() === 'miss') { 
+            x = Math.floor(Math.random() * 10); 
+            y = Math.floor(Math.random() * 10); 
+        }
+        
         return `${x}-${y}`;
     }
 }

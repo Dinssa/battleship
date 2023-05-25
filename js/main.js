@@ -148,24 +148,25 @@ function inPlay(){
                 playOne = true;
             }
         }
-        // TODO: WINNER
-        // games[gameNum].winner = getWinner();
+        games[gameNum].winner = getWinner();
+        if (games[gameNum].winner !== false) games[gameNum].changeMessage(`${games[gameNum].winner.getName()} wins!`);
     }, 200);
 }
 
 function getWinner(){
-
-    if (winByTimeOut() || winBySunkShip()){
-        games[gameNum].inPlay = false;
-        return true;
-    }
     return winByTimeOut() || winBySunkShip();
 };
 
 function winBySunkShip(){
     let totalShipLengths = Object.values(CONSTANTS.SHIPS).reduce(function (acc, ship) { return acc + ship.length; }, 0);
-    if (games[gameNum].playerOne.getHits() === totalShipLengths) return games[gameNum].playerOne;
-    if (games[gameNum].playerTwo.getHits() === totalShipLengths) return games[gameNum].playerTwo;
+    if (games[gameNum].playerTwo.getHits().length === totalShipLengths) {
+        clearInterval(timerInterval);
+        return games[gameNum].playerOne;
+    }
+    if (games[gameNum].playerOne.getHits().length === totalShipLengths) {
+        clearInterval(timerInterval);
+        return games[gameNum].playerTwo;
+    } 
     return false;
 }
 
