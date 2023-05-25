@@ -149,8 +149,8 @@ function inPlay(){
             }
         }
         games[gameNum].winner = getWinner();
-        if (games[gameNum].winner !== false && (minutes > 0 || seconds > 0)) games[gameNum].changeMessage(`${games[gameNum].winner.getName()} wins!`);
-        if (games[gameNum].winner !== false) games[gameNum].changeMessage(`Time's up! ${games[gameNum].winner.getName()} wins.`);
+        if (games[gameNum].winner !== false) games[gameNum].changeMessage(`Time's up! ${games[gameNum].winner.getName()} wins.`); // If there is a winner when time is up
+        if (games[gameNum].winner !== false && (minutes > 0 || seconds > 0)) games[gameNum].changeMessage(`${games[gameNum].winner.getName()} wins!`); // If there is a winner before time is up, show winner
     }, 200);
 }
 
@@ -159,7 +159,8 @@ function getWinner(){
 };
 
 function winBySunkShip(){
-    let totalShipLengths = Object.values(CONSTANTS.SHIPS).reduce(function (acc, ship) { return acc + ship.length; }, 0);
+    let totalShipLengths = Object.values(CONSTANTS.SHIPS).reduce(function (acc, ship) { return acc + ship.length; }, 0); // Total length of all ships
+    // * If all ships of a player have been hit by their oppononent, return opponent as winner
     if (games[gameNum].playerTwo.getHits().length === totalShipLengths) {
         clearInterval(timerInterval);
         return games[gameNum].playerOne;
@@ -173,15 +174,18 @@ function winBySunkShip(){
 
 function winByTimeOut(){
     if (minutes === 0 && seconds === 0){
-        console.log('time out')
         games[gameNum].playerTwo.board.disableCells();
         games[gameNum].changeMessage("Time's up!");
         
+        // * Where time has run out and neither player has won yet
         if (games[gameNum].playerTwo.getHits().length > games[gameNum].playerOne.getHits().length) {
+            // If player two has more hits than player one, return player one as winner
             return games[gameNum].playerOne;
         } else if (games[gameNum].playerTwo.getHits().length < games[gameNum].playerOne.getHits().length){
+            // If player one has more hits than player two, return player two as winner
             return games[gameNum].playerTwo;
         } else {
+            // If both players have the same number of hits, return no one as winner
             return {getName: () => 'No one'}
         }
     }
