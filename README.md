@@ -47,13 +47,13 @@ Battleship Game Specific Requirements:
 # Planning
 Pre-project I sketched out some wireframes of what the game could look like with each button and feature I aimed to include.
 
-[![Game screen](https://onedrive.live.com/embed?resid=3AAE4294F4C93984%216542&authkey=%21AJG53o8YazSS1oc&width=900)](#)
+[![Game screen](https://onedrive.live.com/embed?resid=3AAE4294F4C93984%216542&authkey=%21AJG53o8YazSS1oc&width=900)](#)  
 
 The game consists of two boards: one for the human player and one for the computer opponent. At the top of the screen, there is a scoreboard and a timer. On the left side, there is a game menu with four options: settings, rules, leaderboard, and music. The human player can drag and drop ships to their board and choose from different weapons to attack the computer. The game has four weapons available, including the basic bomb (mvp) and three others. The game menu allows the user to customise the game appearance or mode, learn the game rules and instructions, view previous scores, and toggle the music on or off.
 
 In order to make programming the wireframe out easier I also had an annotated version of the wireframe with rectangles to plan out where each div container would be and how to group elements:
 
-[![Game screen with annotations](https://onedrive.live.com/embed?resid=3AAE4294F4C93984%216543&authkey=%21AGyI0ttaP3nwbJs&width=900)](#)
+[![Game screen with annotations](https://onedrive.live.com/embed?resid=3AAE4294F4C93984%216543&authkey=%21AGyI0ttaP3nwbJs&width=900)](#)  
 
 # Build Process
 ## First Steps
@@ -68,7 +68,7 @@ I started with what I’d call a limiting ‘object-only’ approach, attempting
 
 The final project structure I landed with is as follows: 
 
-[![Project structure](https://onedrive.live.com/embed?resid=3AAE4294F4C93984%216544&authkey=%21ANmA-qc34TXyOr8&width=868&height=525)](#)
+[![Project structure](https://onedrive.live.com/embed?resid=3AAE4294F4C93984%216544&authkey=%21ANmA-qc34TXyOr8&width=950)](#)  
 
 ## Code snippets
 A brief description of the parent program (main.js) is as follows: a battleship game which uses several classes to create and manage a single game logic, each player, the boards of each player and the ships of each board. It also uses some constants and cached elements to store and access data. I include event listeners to handle user input; some functions to initialise the games, render our screen and play the game. A timer is used to limit the game duration and within the play interval statements to alternate turns between the human and computer players. With each run within the play interval it also checks for a winner.
