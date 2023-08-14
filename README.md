@@ -13,7 +13,7 @@ The game is written in an object oriented way with classes for each element of t
 
 I have a separate constants file that defines global constants for the game, for the time being just the available ships. I also have a separate cached elements file that stores some references to the document elements that are used frequently in the game, such as board menus and the message element.
 
-# Live Peview
+# Live Preview
 <p align="center">
 Check out this game on Github Pages
 <br>
